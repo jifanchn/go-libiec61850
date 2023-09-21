@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"gitlab.weiheng-tech.com/SystemIntegrated/battery-pack-tools/61850-test/iec61850"
+	"github.com/jifanchn/go-libiec61850/iec61850"
 	"testing"
 )
 
