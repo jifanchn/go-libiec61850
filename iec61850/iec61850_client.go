@@ -3,7 +3,6 @@ package iec61850
 // #include <iec61850_client.h>
 import "C"
 import (
-	"errors"
 	"fmt"
 	"unsafe"
 )
@@ -30,24 +29,18 @@ func (client *IedClient) Connect(hostname string, tcpPort int) error {
 	return nil
 }
 
-func (client *IedClient) ReadObject(objectRef string) (float64, error) {
+func (client *IedClient) ReadObjectFloatValue(objectRef string, constraint FunctionalConstraint) (float64, error) {
 	cObjectRef := C.CString(objectRef)
 	defer C.free(unsafe.Pointer(cObjectRef))
 
 	var clientError C.IedClientError
-	value := C.IedConnection_readObject(client.connection, &clientError, cObjectRef, C.IEC61850_FC_MX)
+	value := C.IedConnection_readFloatValue(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
 
 	if clientError != C.IED_ERROR_OK {
 		return 0, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, clientError)
 	}
 
-	if C.MmsValue_getType(value) == C.MMS_FLOAT {
-		floatVal := float64(C.MmsValue_toFloat(value))
-		return floatVal, nil
-	} else if C.MmsValue_getType(value) == C.MMS_DATA_ACCESS_ERROR {
-		return 0, errors.New("data access clientError")
-	}
-	return 0, errors.New("unknown clientError")
+	return float64(value), nil
 }
 
 func (client *IedClient) Close() {
