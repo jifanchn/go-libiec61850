@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -50,7 +50,7 @@ typedef enum {
     DATA_ACCESS_ERROR_OBJECT_INVALIDATED = 0,
     DATA_ACCESS_ERROR_HARDWARE_FAULT = 1,
     DATA_ACCESS_ERROR_TEMPORARILY_UNAVAILABLE = 2,
-    DATA_ACCESS_ERROR_OBJECT_ACCESS_DENIed = 3,
+    DATA_ACCESS_ERROR_OBJECT_ACCESS_DENIED = 3,
     DATA_ACCESS_ERROR_OBJECT_UNDEFINED = 4,
     DATA_ACCESS_ERROR_INVALID_ADDRESS = 5,
     DATA_ACCESS_ERROR_TYPE_UNSUPPORTED = 6,
@@ -878,7 +878,7 @@ LIB61850_API MmsValue*
 MmsValue_newBinaryTime(bool timeOfDay);
 
 /**
- * \brief Create a new MmsValue instance of type MMS_VISIBLE_STRING from the specifIed byte array
+ * \brief Create a new MmsValue instance of type MMS_VISIBLE_STRING from the specified byte array
  *
  * \param byteArray the byte array containing the string data
  * \param size the size of the byte array
@@ -889,7 +889,7 @@ LIB61850_API MmsValue*
 MmsValue_newVisibleStringFromByteArray(const uint8_t* byteArray, int size);
 
 /**
- * \brief Create a new MmsValue instance of type MMS_STRING from the specifIed byte array
+ * \brief Create a new MmsValue instance of type MMS_STRING from the specified byte array
  *
  * \param byteArray the byte array containing the string data
  * \param size the size of the byte array
@@ -967,7 +967,7 @@ LIB61850_API MmsType
 MmsValue_getType(const MmsValue* self);
 
 /**
- * \brief Get a sub-element of a MMS_STRUCTURE value specifIed by a path name.
+ * \brief Get a sub-element of a MMS_STRUCTURE value specified by a path name.
  *
  * \param self the MmsValue instance
  * \param varSpec - type specification if the MMS_STRUCTURE value

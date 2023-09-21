@@ -23,7 +23,7 @@ typedef enum DataAccessError {
 	DataAccessError_objectinvalidated	= 0,
 	DataAccessError_hardwarefault	= 1,
 	DataAccessError_temporarilyunavailable	= 2,
-	DataAccessError_objectaccessdenIed	= 3,
+	DataAccessError_objectaccessdenied	= 3,
 	DataAccessError_objectundefined	= 4,
 	DataAccessError_invalidaddress	= 5,
 	DataAccessError_typeunsupported	= 6,

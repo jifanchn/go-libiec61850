@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -59,7 +59,7 @@ typedef struct {
 #include "mms_client_connection.h"
 
 LIB61850_INTERNAL bool
-mmsMsg_parseFileOpenResponse(uint8_t* buffer, int bufPos, int maxBufPos, int32_t* frsmId, uint32_t* fileSize, uint64_t* lastModifIed);
+mmsMsg_parseFileOpenResponse(uint8_t* buffer, int bufPos, int maxBufPos, int32_t* frsmId, uint32_t* fileSize, uint64_t* lastModified);
 
 LIB61850_INTERNAL bool
 mmsMsg_parseFileReadResponse(uint8_t* buffer, int bufPos, int maxBufPos, uint32_t invokeId, int32_t frsmId,  bool* moreFollows, MmsConnection_FileReadHandler handler, void* handlerParameter);

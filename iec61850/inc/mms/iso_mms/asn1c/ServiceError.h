@@ -91,7 +91,7 @@ typedef enum ServiceError__errorClass__access {
 	ServiceError__errorClass__access_other	= 0,
 	ServiceError__errorClass__access_objectaccessunsupported	= 1,
 	ServiceError__errorClass__access_objectnonexistent	= 2,
-	ServiceError__errorClass__access_objectaccessdenIed	= 3,
+	ServiceError__errorClass__access_objectaccessdenied	= 3,
 	ServiceError__errorClass__access_objectinvalidated	= 4
 } e_ServiceError__errorClass__access;
 typedef enum ServiceError__errorClass__initiate {
@@ -120,7 +120,7 @@ typedef enum ServiceError__errorClass__file {
 	ServiceError__errorClass__file_filenamesyntaxError	= 3,
 	ServiceError__errorClass__file_contenttypeinvalid	= 4,
 	ServiceError__errorClass__file_positioninvalid	= 5,
-	ServiceError__errorClass__file_fileaccesdenIed	= 6,
+	ServiceError__errorClass__file_fileaccesdenied	= 6,
 	ServiceError__errorClass__file_filenonexistent	= 7,
 	ServiceError__errorClass__file_duplicatefilename	= 8,
 	ServiceError__errorClass__file_insufficientspaceinfilestore	= 9

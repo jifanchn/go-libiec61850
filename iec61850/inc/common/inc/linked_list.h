@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -112,7 +112,7 @@ LIB61850_API void
 LinkedList_add(LinkedList self, void* data);
 
 /**
- * \brief Check if the specifIed data is contained in the list
+ * \brief Check if the specified data is contained in the list
  *
  * \param self the LinkedList instance
  * \param data data to remove from the LinkedList instance
@@ -123,7 +123,7 @@ LIB61850_API bool
 LinkedList_contains(LinkedList self, void* data);
 
 /**
- * \brief Removed the specifIed element from the list
+ * \brief Removed the specified element from the list
  *
  * \param self the LinkedList instance
  * \param data data to remove from the LinkedList instance
@@ -134,7 +134,7 @@ LIB61850_API bool
 LinkedList_remove(LinkedList self, void* data);
 
 /**
- * \brief Get the list element specifIed by index (starting with 0).
+ * \brief Get the list element specified by index (starting with 0).
  *
  * \param self the LinkedList instance
  * \param index index of the requested element.

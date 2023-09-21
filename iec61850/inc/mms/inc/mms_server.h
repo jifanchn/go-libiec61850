@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -147,7 +147,7 @@ typedef  enum {
  * \param localFilename the requested file or directory name at the server
  * \param otherFilename a second file name parameter (e.g. source file of the ObtainFile or new file of rename file)
  *
- * \return MMS_ERROR_NONE when the request is accepted, otherwise use the appropriate error code (e.g. MMS_ERROR_FILE_FILE_ACCESS_DENIed)
+ * \return MMS_ERROR_NONE when the request is accepted, otherwise use the appropriate error code (e.g. MMS_ERROR_FILE_FILE_ACCESS_DENIED)
  */
 typedef MmsError (*MmsFileAccessHandler) (void* parameter, MmsServerConnection connection, MmsFileServiceType service,
                                           const char* localFilename, const char* otherFilename);

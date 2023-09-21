@@ -43,16 +43,16 @@ typedef struct asn_per_data_s {
 } asn_per_data_t;
 
 /*
- * Extract a small number of bits (<= 31) from the specifIed PER data pointer.
- * This function returns -1 if the specifIed number of bits could not be
+ * Extract a small number of bits (<= 31) from the specified PER data pointer.
+ * This function returns -1 if the specified number of bits could not be
  * extracted due to EOD or other conditions.
  */
 LIB61850_INTERNAL
 int32_t per_get_few_bits(asn_per_data_t *per_data, int get_nbits);
 
 /*
- * Extract a large number of bits from the specifIed PER data pointer.
- * This function returns -1 if the specifIed number of bits could not be
+ * Extract a large number of bits from the specified PER data pointer.
+ * This function returns -1 if the specified number of bits could not be
  * extracted due to EOD or other conditions.
  */
 LIB61850_INTERNAL

@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -71,10 +71,10 @@ typedef struct
 /** Connection state of the IedConnection instance - either closed(idle), connecting, connected, or closing) */
 typedef enum
 {
-    Ied_STATE_CLOSED = 0,
-    Ied_STATE_CONNECTING,
-    Ied_STATE_CONNECTED,
-    Ied_STATE_CLOSING
+    IED_STATE_CLOSED = 0,
+    IED_STATE_CONNECTING,
+    IED_STATE_CONNECTED,
+    IED_STATE_CLOSING
 } IedConnectionState;
 
 /** used to describe the error reason for most client side service functions */
@@ -82,91 +82,91 @@ typedef enum {
     /* general errors */
 
     /** No error occurred - service request has been successful */
-    Ied_ERROR_OK = 0,
+    IED_ERROR_OK = 0,
 
     /** The service request can not be executed because the client is not yet connected */
-    Ied_ERROR_NOT_CONNECTED = 1,
+    IED_ERROR_NOT_CONNECTED = 1,
 
     /** Connect service not execute because the client is already connected */
-    Ied_ERROR_ALREADY_CONNECTED = 2,
+    IED_ERROR_ALREADY_CONNECTED = 2,
 
     /** The service request can not be executed caused by a loss of connection */
-    Ied_ERROR_CONNECTION_LOST = 3,
+    IED_ERROR_CONNECTION_LOST = 3,
 
     /** The service or some given parameters are not supported by the client stack or by the server */
-    Ied_ERROR_SERVICE_NOT_SUPPORTED = 4,
+    IED_ERROR_SERVICE_NOT_SUPPORTED = 4,
 
     /** Connection rejected by server */
-    Ied_ERROR_CONNECTION_REJECTED = 5,
+    IED_ERROR_CONNECTION_REJECTED = 5,
 
     /** Cannot send request because outstanding call limit is reached */
-    Ied_ERROR_OUTSTANDING_CALL_LIMIT_REACHED = 6,
+    IED_ERROR_OUTSTANDING_CALL_LIMIT_REACHED = 6,
 
     /* client side errors */
 
     /** API function has been called with an invalid argument */
-    Ied_ERROR_USER_PROVIDED_INVALID_ARGUMENT = 10,
+    IED_ERROR_USER_PROVIDED_INVALID_ARGUMENT = 10,
 
-    Ied_ERROR_ENABLE_REPORT_FAILED_DATASET_MISMATCH = 11,
+    IED_ERROR_ENABLE_REPORT_FAILED_DATASET_MISMATCH = 11,
 
     /** The object provided object reference is invalid (there is a syntactical error). */
-    Ied_ERROR_OBJECT_REFERENCE_INVALID = 12,
+    IED_ERROR_OBJECT_REFERENCE_INVALID = 12,
 
     /** Received object is of unexpected type */
-    Ied_ERROR_UNEXPECTED_VALUE_RECEIVED = 13,
+    IED_ERROR_UNEXPECTED_VALUE_RECEIVED = 13,
 
     /* service error - error reported by server */
 
     /** The communication to the server failed with a timeout */
-    Ied_ERROR_TIMEOUT = 20,
+    IED_ERROR_TIMEOUT = 20,
 
     /** The server rejected the access to the requested object/service due to access control */
-    Ied_ERROR_ACCESS_DENIed = 21,
+    IED_ERROR_ACCESS_DENIED = 21,
 
     /** The server reported that the requested object does not exist (returned by server) */
-    Ied_ERROR_OBJECT_DOES_NOT_EXIST = 22,
+    IED_ERROR_OBJECT_DOES_NOT_EXIST = 22,
 
     /** The server reported that the requested object already exists */
-    Ied_ERROR_OBJECT_EXISTS = 23,
+    IED_ERROR_OBJECT_EXISTS = 23,
 
     /** The server does not support the requested access method (returned by server) */
-    Ied_ERROR_OBJECT_ACCESS_UNSUPPORTED = 24,
+    IED_ERROR_OBJECT_ACCESS_UNSUPPORTED = 24,
 
     /** The server expected an object of another type (returned by server) */
-    Ied_ERROR_TYPE_INCONSISTENT = 25,
+    IED_ERROR_TYPE_INCONSISTENT = 25,
 
     /** The object or service is temporarily unavailable (returned by server) */
-    Ied_ERROR_TEMPORARILY_UNAVAILABLE = 26,
+    IED_ERROR_TEMPORARILY_UNAVAILABLE = 26,
 
-    /** The specifIed object is not defined in the server (returned by server) */
-    Ied_ERROR_OBJECT_UNDEFINED = 27,
+    /** The specified object is not defined in the server (returned by server) */
+    IED_ERROR_OBJECT_UNDEFINED = 27,
 
-    /** The specifIed address is invalid (returned by server) */
-    Ied_ERROR_INVALID_ADDRESS = 28,
+    /** The specified address is invalid (returned by server) */
+    IED_ERROR_INVALID_ADDRESS = 28,
 
     /** Service failed due to a hardware fault (returned by server) */
-    Ied_ERROR_HARDWARE_FAULT = 29,
+    IED_ERROR_HARDWARE_FAULT = 29,
 
     /** The requested data type is not supported by the server (returned by server) */
-    Ied_ERROR_TYPE_UNSUPPORTED = 30,
+    IED_ERROR_TYPE_UNSUPPORTED = 30,
 
     /** The provided attributes are inconsistent (returned by server) */
-    Ied_ERROR_OBJECT_ATTRIBUTE_INCONSISTENT = 31,
+    IED_ERROR_OBJECT_ATTRIBUTE_INCONSISTENT = 31,
 
     /** The provided object value is invalid (returned by server) */
-    Ied_ERROR_OBJECT_VALUE_INVALID = 32,
+    IED_ERROR_OBJECT_VALUE_INVALID = 32,
 
     /** The object is invalidated (returned by server) */
-    Ied_ERROR_OBJECT_INVALIDATED = 33,
+    IED_ERROR_OBJECT_INVALIDATED = 33,
 
     /** Received an invalid response message from the server */
-    Ied_ERROR_MALFORMED_MESSAGE = 34,
+    IED_ERROR_MALFORMED_MESSAGE = 34,
 
     /** Service not implemented */
-    Ied_ERROR_SERVICE_NOT_IMPLEMENTED = 98,
+    IED_ERROR_SERVICE_NOT_IMPLEMENTED = 98,
 
     /** unknown error */
-    Ied_ERROR_UNKNOWN = 99
+    IED_ERROR_UNKNOWN = 99
 } IedClientError;
 
 /**************************************************
@@ -176,7 +176,7 @@ typedef enum {
 /**
  * \brief create a new IedConnection instance
  *
- * This function creates a new IedConnection instance that is used to handle a connection to an Ied.
+ * This function creates a new IedConnection instance that is used to handle a connection to an IED.
  * It allocated all required resources. The new connection is in the "CLOSED" state. Before it can be used
  * the connect method has to be called. The connection will be in non-TLS and thread mode.
  *
@@ -188,7 +188,7 @@ IedConnection_create(void);
 /**
  * \brief create a new IedConnection instance (extended version)
  *
- * This function creates a new IedConnection instance that is used to handle a connection to an Ied.
+ * This function creates a new IedConnection instance that is used to handle a connection to an IED.
  * It allocated all required resources. The new connection is in the "CLOSED" state. Before it can be used
  * the \ref IedConnection_connect or \ref IedConnection_connectAsync method has to be called.
  * The connection will use TLS when a TLSConfiguration object is provided. The useThread is false the
@@ -206,7 +206,7 @@ IedConnection_createEx(TLSConfiguration tlsConfig, bool useThreads);
 /**
  * \brief create a new IedConnection instance that has support for TLS
  *
- * This function creates a new IedConnection instance that is used to handle a connection to an Ied.
+ * This function creates a new IedConnection instance that is used to handle a connection to an IED.
  * It allocated all required resources. The new connection is in the "CLOSED" state. Before it can be used
  * the \ref IedConnection_connect or \ref IedConnection_connectAsync method has to be called.
  * The connection will use TLS when a TLSConfiguration object is provided. The connection will be in thread mode.
@@ -308,11 +308,11 @@ IedConnection_tick(IedConnection self);
  * \brief Generic serivce callback handler
  *
  * NOTE: This callback handler is used by several asynchronous service functions that require
- * only a simple feedback in form of a success (Ied_ERROR_OK) or failure (other \ref err value).
+ * only a simple feedback in form of a success (IED_ERROR_OK) or failure (other \ref err value).
  *
  * \param invokeId the invoke ID used by the related service request
  * \param parameter user provided parameter
- * \param err the result code. Ied_ERROR_OK indicates success.
+ * \param err the result code. IED_ERROR_OK indicates success.
  */
 typedef void
 (*IedConnection_GenericServiceHandler) (uint32_t invokeId, void* parameter, IedClientError err);
@@ -357,7 +357,7 @@ IedConnection_connectAsync(IedConnection self, IedClientError* error, const char
  * After sending the abort message the connection is closed immediately.
  * The client can assume the connection to be closed when the function returns and the
  * destroy method can be called. If the connection is not in "connected" state an
- * Ied_ERROR_NOT_CONNECTED error will be reported.
+ * IED_ERROR_NOT_CONNECTED error will be reported.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -370,10 +370,10 @@ IedConnection_abort(IedConnection self, IedClientError* error);
  *
  * This will close the MMS association by sending an ACSE abort message to the server.
  * After sending the abort message the connection is closed immediately.
- * If the connection is not in "connected" state an Ied_ERROR_NOT_CONNECTED error will be reported.
+ * If the connection is not in "connected" state an IED_ERROR_NOT_CONNECTED error will be reported.
  *
  * NOTE: This function works asynchronously. The IedConnection object should not be destroyed before the
- * connection state changes to Ied_STATE_CLOSED.
+ * connection state changes to IED_STATE_CLOSED.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -388,7 +388,7 @@ IedConnection_abortAsync(IedConnection self, IedClientError* error);
  * The client can NOT assume the connection to be closed when the function returns, It can
  * also fail if the server returns with a negative response. To be sure that the connection
  * will be close the close or abort methods should be used. If the connection is not in "connected" state an
- * Ied_ERROR_NOT_CONNECTED error will be reported.
+ * IED_ERROR_NOT_CONNECTED error will be reported.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -403,7 +403,7 @@ IedConnection_release(IedConnection self, IedClientError* error);
  * The client can NOT assume the connection to be closed when the function returns, It can
  * also fail if the server returns with a negative response. To be sure that the connection
  * will be close the close or abort methods should be used. If the connection is not in "connected" state an
- * Ied_ERROR_NOT_CONNECTED error will be reported.
+ * IED_ERROR_NOT_CONNECTED error will be reported.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -777,7 +777,7 @@ ClientGooseControlBlock_setDstAddress_appid(ClientGooseControlBlock self, uint16
  * \brief Read access to attributes of a GOOSE control block (GoCB) at the connected server. A GoCB contains
  * the configuration values for a single GOOSE publisher.
  *
- * The requested GoCB has to be specifIed by its object IEC 61850 ACSI object reference. E.g.
+ * The requested GoCB has to be specified by its object IEC 61850 ACSI object reference. E.g.
  *
  * "simpleIOGernericIO/LLN0.gcbEvents"
  *
@@ -806,7 +806,7 @@ IedConnection_getGoCBValues(IedConnection self, IedClientError* error, const cha
 /**
  * \brief Write access to attributes of a GOOSE control block (GoCB) at the connected server
  *
- * The GoCB and the values to be written are specifIed with the goCB parameter.
+ * The GoCB and the values to be written are specified with the goCB parameter.
  *
  * The parametersMask parameter specifies which attributes of the remote GoCB have to be set by this request.
  * You can specify multiple attributes by ORing the defined bit values. If all attributes have to be written
@@ -1086,7 +1086,7 @@ IedConnection_writeOctetString(IedConnection self, IedClientError* error, const 
 /**
  * \brief Read access to attributes of a report control block (RCB) at the connected server
  *
- * The requested RCB has to be specifIed by its object reference. E.g.
+ * The requested RCB has to be specified by its object reference. E.g.
  *
  * "simpleIOGenericIO/LLN0.RP.EventsRCB01"
  *
@@ -1213,7 +1213,7 @@ typedef int ReasonForInclusion;
 /**
  * \brief Write access to attributes of a report control block (RCB) at the connected server
  *
- * The requested RCB has to be specifIed by its object reference (see also IedConnection_getRCBValues).
+ * The requested RCB has to be specified by its object reference (see also IedConnection_getRCBValues).
  * The object reference for the referenced RCB is contained in the provided ClientReportControlBlock instance.
  *
  * The parametersMask parameter specifies which attributes of the remote RCB have to be set by this request.
@@ -1248,10 +1248,10 @@ IedConnection_setRCBValuesAsync(IedConnection self, IedClientError* error, Clien
 typedef void (*ReportCallbackFunction) (void* parameter, ClientReport report);
 
 /**
- * \brief Install a report handler function for the specifIed report control block (RCB)
+ * \brief Install a report handler function for the specified report control block (RCB)
  *
- * This function will replace a report handler set earlier for the specifIed RCB. The report handler
- * will be called whenever a report for the specifIed RCB is received.
+ * This function will replace a report handler set earlier for the specified RCB. The report handler
+ * will be called whenever a report for the specified RCB is received.
  * Please note that this function should be called whenever the RCB data set is changed or updated.
  * Otherwise the internal data structures storing the received data set values will not be updated
  * correctly.
@@ -1271,7 +1271,7 @@ IedConnection_installReportHandler(IedConnection self, const char* rcbReference,
         void* handlerParameter);
 
 /**
- * \brief uninstall a report handler function for the specifIed report control block (RCB)
+ * \brief uninstall a report handler function for the specified report control block (RCB)
  *
  * \param self the connection object
  * \param rcbReference object reference of the report control block
@@ -1280,7 +1280,7 @@ LIB61850_API void
 IedConnection_uninstallReportHandler(IedConnection self, const char* rcbReference);
 
 /**
- * \brief trigger a general interrogation (GI) report for the specifIed report control block (RCB)
+ * \brief trigger a general interrogation (GI) report for the specified report control block (RCB)
  *
  * The RCB must have been enabled and GI set as trigger option before this command can be performed.
  *
@@ -1345,7 +1345,7 @@ ClientReport_getRptId(ClientReport self);
  * \param self the ClientReport instance
  * \param elementIndex index of the data set element (starting with 0)
  *
- * \return reason code for the inclusion of the specifIed element
+ * \return reason code for the inclusion of the specified element
  */
 LIB61850_API ReasonForInclusion
 ClientReport_getReasonForInclusion(ClientReport self, int elementIndex);
@@ -1829,7 +1829,7 @@ IedConnection_deleteDataSet(IedConnection self, IedClientError* error, const cha
  * This function deletes a data set at the server. The parameter dataSetReference is the name of the data set
  * to delete. It is either in the form LDName/LNodeName.dataSetName or @dataSetName for an association specific data set.
  *
- * The data set was deleted successfully when the callback parameter "error" is Ied_ERROR_OK. Otherwise the "error"
+ * The data set was deleted successfully when the callback parameter "error" is IED_ERROR_OK. Otherwise the "error"
  * parameter contains a particular error code.
  *
  * \param connection the connection object
@@ -1928,7 +1928,7 @@ typedef void
  * The values parameter has to be the same number of elements as are members in the data set.
  *
  * When the service call had been successful the \ref IedConnection_WriteDataSetHandler is called with an error value of
- * Ied_ERROR_OK and a list of MmsValue instances of type data access error. These describe the access results of the individual
+ * IED_ERROR_OK and a list of MmsValue instances of type data access error. These describe the access results of the individual
  * data set entries.
  *
  * \param connection the connection object
@@ -2074,7 +2074,7 @@ typedef enum
  *
  * \param invokeId invoke ID of the command sent by the client
  * \param parameter the user parameter that is passed to the callback function
- * \param err the error code when an error occurred, or Ied_ERROR_OK
+ * \param err the error code when an error occurred, or IED_ERROR_OK
  * \param type control action type that caused the callback
  * \param success true, when the command was successful, false otherwise
  *
@@ -2093,17 +2093,17 @@ LIB61850_API const char*
 ControlObjectClient_getObjectReference(ControlObjectClient self);
 
 /**
- * \brief Get the current control model (local representation) applIed to the control object
+ * \brief Get the current control model (local representation) applied to the control object
  *
  * \param self the control object instance to use
  *
- * \return the current applIed control model (\ref ControlModel)
+ * \return the current applied control model (\ref ControlModel)
  */
 LIB61850_API ControlModel
 ControlObjectClient_getControlModel(ControlObjectClient self);
 
 /**
- * \brief Set the applIed control model
+ * \brief Set the applied control model
  *
  * NOTE: This function call will not change the server control model.
  *
@@ -2117,7 +2117,7 @@ ControlObjectClient_setControlModel(ControlObjectClient self, ControlModel ctlMo
  * \brief Change the control model of the server.
  *
  * NOTE: Not supported by all servers. Information can be found in the PIXIT of the server.
- * Also sets the applIed control model for this client control instance.
+ * Also sets the applied control model for this client control instance.
  *
  * \param self the control object instance to use
  * \param ctlModel the new control model
@@ -2501,7 +2501,7 @@ IedConnection_getLogicalNodeVariables(IedConnection self, IedClientError* error,
 		const char* logicalNodeReference);
 
 /**
- * \brief returns the directory of the given logical node (LN) containing elements of the specifIed ACSI class
+ * \brief returns the directory of the given logical node (LN) containing elements of the specified ACSI class
  *
  * Implementation of the GetLogicalNodeDirectory ACSI service. In contrast to the ACSI description this
  * function does not always creates a request to the server. For most ACSI classes it simply accesses the
@@ -2514,7 +2514,7 @@ IedConnection_getLogicalNodeVariables(IedConnection self, IedClientError* error,
  * \param logicalNodeReference string that represents the LN reference
  * \param acsiClass specifies the ACSI class
  *
- * \return list of all logical node elements of the specifIed ACSI class type as C strings in a LinkedList
+ * \return list of all logical node elements of the specified ACSI class type as C strings in a LinkedList
  */
 LIB61850_API LinkedList /*<char*>*/
 IedConnection_getLogicalNodeDirectory(IedConnection self, IedClientError* error,
@@ -2721,10 +2721,10 @@ IedConnection_getVariableSpecificationAsync(IedConnection self, IedClientError* 
 /**
  * \brief Implementation of the QueryLogByTime ACSI service
  *
- * Read log entries from a log at the server. The log entries to read are specifIed by
+ * Read log entries from a log at the server. The log entries to read are specified by
  * a starting time and an end time. If the complete range does not fit in a single MMS message
  * the moreFollows flag will be set to true, to indicate that more entries are available for the
- * specifIed time range.
+ * specified time range.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -2742,10 +2742,10 @@ IedConnection_queryLogByTime(IedConnection self, IedClientError* error, const ch
 /**
  * \brief Implementation of the QueryLogAfter ACSI service
  *
- * Read log entries from a log at the server following the entry with the specifIed entryID and timestamp.
+ * Read log entries from a log at the server following the entry with the specified entryID and timestamp.
  * If the complete range does not fit in a single MMS message
  * the moreFollows flag will be set to true, to indicate that more entries are available for the
- * specifIed time range.
+ * specified time range.
  *
  * \param self the connection object
  * \param error the error code if an error occurs
@@ -2786,7 +2786,7 @@ typedef struct sFileDirectoryEntry* FileDirectoryEntry;
  * @deprecated Will be removed from API
  */
 LIB61850_API FileDirectoryEntry
-FileDirectoryEntry_create(const char* fileName, uint32_t fileSize, uint64_t lastModifIed);
+FileDirectoryEntry_create(const char* fileName, uint32_t fileSize, uint64_t lastModified);
 
 /**
  * \brief Destroy a FileDirectoryEntry object (free all resources)
@@ -2826,11 +2826,11 @@ FileDirectoryEntry_getFileSize(FileDirectoryEntry self);
  * \return UTC timestamp in milliseconds
  */
 LIB61850_API uint64_t
-FileDirectoryEntry_getLastModifIed(FileDirectoryEntry self);
+FileDirectoryEntry_getLastModified(FileDirectoryEntry self);
 
 
 /**
- * \brief returns the directory entries of the specifIed file directory.
+ * \brief returns the directory entries of the specified file directory.
  *
  * Requires the server to support file services.
  *
@@ -2852,7 +2852,7 @@ IedConnection_getFileDirectory(IedConnection self, IedClientError* error, const 
 
 
 /**
- * \brief returns the directory entries of the specifIed file directory returned by a single file directory request.
+ * \brief returns the directory entries of the specified file directory returned by a single file directory request.
  *
  * This function will only create a single request and the result may only be the directory that fits
  * into a single MMS PDU. If the server contains more directory entries, this will be indicated by setting
@@ -2887,7 +2887,7 @@ IedConnection_getFileDirectoryEx(IedConnection self, IedClientError* error, cons
  *
  * Will be called once for each file directory entry and after the last entry with \ref moreFollows = false to indicate
  * to indicate that no more data will follow. In case of an error the callback will be called with
- * \ref err != Ied_ERROR_OK and moreFollows = false.
+ * \ref err != IED_ERROR_OK and moreFollows = false.
  */
 
 /**
@@ -2895,19 +2895,19 @@ IedConnection_getFileDirectoryEx(IedConnection self, IedClientError* error, cons
  *
  * Will be called once for each file directory entry and after the last entry with \ref filename = NULL to indicate
  * with \ref moreFollows set to true if more data is available at the server (can only happen when using the \ref IedConnection_getFileDirectoryAsyncEx
- * function). In case of an error the callback will be called with \ref err != Ied_ERROR_OK and moreFollows = false.
+ * function). In case of an error the callback will be called with \ref err != IED_ERROR_OK and moreFollows = false.
  *
  * \param invokeId invoke ID of the request
  * \param parameter user provided parameter
- * \param err error code in case of a problem, otherwise Ied_ERROR_OK
+ * \param err error code in case of a problem, otherwise IED_ERROR_OK
  * \param filename the filename of the current file directory entry or NULL if no more entries are available
  * \param size the file size in byte of the current file directory entry
- * \param lastModifIed the last modifIed timestamp of the current file directory entry
+ * \param lastModified the last modified timestamp of the current file directory entry
  *
  * \return return false when the request has to be stopped (no further callback invokations), true otherwise
  */
 typedef bool
-(*IedConnection_FileDirectoryEntryHandler) (uint32_t invokeId, void* parameter, IedClientError err, char* filename, uint32_t size, uint64_t lastModfifIed,
+(*IedConnection_FileDirectoryEntryHandler) (uint32_t invokeId, void* parameter, IedClientError err, char* filename, uint32_t size, uint64_t lastModfified,
         bool moreFollows);
 
 /**
@@ -2975,7 +2975,7 @@ IedConnection_getFile(IedConnection self, IedClientError* error, const char* fil
  *
  * \param invokeId invoke ID of the message containing the received data
  * \param parameter user provided parameter passed to the callback
- * \param err error code in case of an error or Ied_ERROR_OK
+ * \param err error code in case of an error or IED_ERROR_OK
  * \param originalInvokeId the invoke ID of the original (first) request. This is usually the request to open the file.
  * \param buffer the buffer that contains the received file data
  * \param bytesRead the number of bytes read into the buffer

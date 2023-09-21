@@ -66,7 +66,7 @@ static inline void ASN_DEBUG(const char *fmt, ...) { (void)fmt; }
 #endif	/* ASN_DEBUG */
 
 /*
- * Invoke the application-supplIed callback and fail, if something is wrong.
+ * Invoke the application-supplied callback and fail, if something is wrong.
  */
 #define	__ASN_E_cbc(buf, size)	(cb((buf), (size), app_key) < 0)
 #define	_ASN_E_CALLBACK(foo)	do {					\

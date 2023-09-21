@@ -85,7 +85,7 @@ TLSSocket_getPeerCertificate(TLSSocket self, int* certSize);
  * the function returns 0. If an error happens the function shall return -1.
  *
  * \param self the client, connection or server socket instance
- * \param buf the buffer where the read bytes are copIed to
+ * \param buf the buffer where the read bytes are copied to
  * \param size the maximum number of bytes to read (size of the provided buffer)
  *
  * \return the number of bytes read or -1 if an error occurred

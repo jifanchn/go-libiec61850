@@ -49,7 +49,7 @@ LIB61850_INTERNAL ssize_t ber_fetch_tag(const void *bufptr, size_t size, ber_tlv
  * This function serializes the tag (T from TLV) in BER format.
  * It always returns number of bytes necessary to represent the tag,
  * it is a caller's responsibility to check the return value
- * against the supplIed buffer's size.
+ * against the supplied buffer's size.
  */
 LIB61850_INTERNAL size_t ber_tlv_tag_serialize(ber_tlv_tag_t tag, void *bufptr, size_t size);
 

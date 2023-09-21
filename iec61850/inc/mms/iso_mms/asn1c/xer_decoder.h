@@ -60,7 +60,7 @@ asn_dec_rval_t xer_decode_general(asn_codec_ctx_t *opt_codec_ctx,
 
 /*
  * Fetch the next XER (XML) token from the stream.
- * The function returns the number of bytes occupIed by the chunk type,
+ * The function returns the number of bytes occupied by the chunk type,
  * returned in the _ch_type. The _ch_type is only set (and valid) when
  * the return value is greater than 0.
  */
@@ -81,11 +81,11 @@ ssize_t xer_next_token(int *stateContext,
 	XCT_BROKEN	= 0,	/* The tag is broken */
 	XCT_OPENING	= 1,	/* This is the <opening> tag */
 	XCT_CLOSING	= 2,	/* This is the </closing> tag */
-	XCT_BOTH	= 3,	/* This is the <modifIed/> tag */
+	XCT_BOTH	= 3,	/* This is the <modified/> tag */
 	XCT__UNK__MASK	= 4,	/* Mask of everything unexpected */
 	XCT_UNKNOWN_OP	= 5,	/* Unexpected <opening> tag */
 	XCT_UNKNOWN_CL	= 6,	/* Unexpected </closing> tag */
-	XCT_UNKNOWN_BO	= 7	/* Unexpected <modifIed/> tag */
+	XCT_UNKNOWN_BO	= 7	/* Unexpected <modified/> tag */
   } xer_check_tag_e;
 
 LIB61850_INTERNAL

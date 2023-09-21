@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -56,7 +56,7 @@ LIB61850_API IedModel*
 IedModel_create(const char* name);
 
 /**
- * \brief Set the name of the Ied (use only for dynamic model!)
+ * \brief Set the name of the IED (use only for dynamic model!)
  *
  * This will change the default name (usually "TEMPLATE") to a user configured values.
  * NOTE: This function has to be called before IedServer_create !
@@ -64,7 +64,7 @@ IedModel_create(const char* name);
  * used instead of IedModel_setIedName.
  *
  * \param model the IedModel instance
- * \param the name of the configured Ied
+ * \param the name of the configured IED
  */
 LIB61850_API void
 IedModel_setIedNameForDynamicModel(IedModel* self, const char* name);
@@ -82,10 +82,10 @@ LIB61850_API void
 IedModel_destroy(IedModel* model);
 
 /**
- * \brief Create a new logical device model and add it to the Ied model
+ * \brief Create a new logical device model and add it to the IED model
  *
  * \param name the name of the new logical device
- * \param parent the parent Ied model
+ * \param parent the parent IED model
  *
  * \return the newly created LogicalDevice instance
  */
@@ -369,7 +369,7 @@ ReportControlBlock_getOwner(ReportControlBlock* self);
  * \param parent the parent LN.
  * \param dataSetName name (object reference) of the default data set or NULL if no data set
  *        is set by default
- * \param logRef name (object reference) of the default log or NULL if no log is set by default. THe LDname doesn't contain the Ied name!
+ * \param logRef name (object reference) of the default log or NULL if no log is set by default. THe LDname doesn't contain the IED name!
  * \param trgOps the trigger options supported by this LCB (bit set)
  * \param intgPd integrity period in milliseconds
  * \param logEna if true the log will be enabled by default, false otherwise
@@ -417,8 +417,8 @@ SettingGroupControlBlock_create(LogicalNode* parent, uint8_t actSG, uint8_t numO
  * \param dataSet the data set reference to be used by the GoCB
  * \param confRev the configuration revision
  * \param fixedOffs indicates if GOOSE publisher shall use fixed offsets (NOT YET SUPPORTED)
- * \param minTime minimum GOOSE retransmission time (-1 if not specifIed - uses stack default then)
- * \param maxTime GOOSE retransmission time in stable state (-1 if not specifIed - uses stack default then)
+ * \param minTime minimum GOOSE retransmission time (-1 if not specified - uses stack default then)
+ * \param maxTime GOOSE retransmission time in stable state (-1 if not specified - uses stack default then)
  *
  * \return the new GoCB instance
  */

@@ -1,5 +1,5 @@
 /*
- *  Ied_server_private.h
+ *  ied_server_private.h
  *
  *  Library private function definitions for IedServer.
  *
@@ -13,7 +13,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -24,8 +24,8 @@
  */
 
 
-#ifndef Ied_SERVER_PRIVATE_H_
-#define Ied_SERVER_PRIVATE_H_
+#ifndef IED_SERVER_PRIVATE_H_
+#define IED_SERVER_PRIVATE_H_
 
 #define ALLOW_WRITE_ACCESS_DC 1
 #define ALLOW_WRITE_ACCESS_CF 2
@@ -115,4 +115,4 @@ private_IedServer_addNewClientConnection(IedServer self, ClientConnection newCli
 LIB61850_INTERNAL void
 private_IedServer_removeClientConnection(IedServer self, ClientConnection clientConnection);
 
-#endif /* Ied_SERVER_PRIVATE_H_ */
+#endif /* IED_SERVER_PRIVATE_H_ */

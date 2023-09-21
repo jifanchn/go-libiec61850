@@ -11,7 +11,7 @@
  *	(at your option) any later version.
  *
  *	libIEC61850 is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implIed warranty of
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
  *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *	GNU General Public License for more details.
  *
@@ -29,7 +29,7 @@
 typedef enum  {
     MMS_VALUE_NO_RESPONSE,
 	MMS_VALUE_OK,
-	MMS_VALUE_ACCESS_DENIed,
+	MMS_VALUE_ACCESS_DENIED,
 	MMS_VALUE_VALUE_INVALID,
 	MMS_VALUE_TEMPORARILY_UNAVAILABLE,
 	MMS_VALUE_OBJECT_ACCESS_UNSUPPORTED

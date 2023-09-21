@@ -21,7 +21,7 @@ typedef enum {
 	PXML_COMMENT,	/* An XML comment, including "<!--" and "-->". */
 	/* 
 	 * The following chunk types are reported if the chunk
-	 * terminates the specifIed XML element.
+	 * terminates the specified XML element.
 	 */
 	PXML_TAG_END,		/* Tag ended */
 	PXML_COMMENT_END	/* Comment ended */
@@ -30,8 +30,8 @@ typedef enum {
 /*
  * Callback function that is called by the parser when parsed data is
  * available. The _opaque is the pointer to a field containing opaque user 
- * data specifIed in pxml_create() call. The chunk type is _type and the text
- * data is the piece of buffer identifIed by _bufid (as supplIed to
+ * data specified in pxml_create() call. The chunk type is _type and the text 
+ * data is the piece of buffer identified by _bufid (as supplied to
  * pxml_feed() call) starting at offset _offset and of _size bytes size. 
  * The chunk is NOT '\0'-terminated.
  */
@@ -40,9 +40,9 @@ typedef int (pxml_callback_f)(pxml_chunk_type_e _type,
 
 /*
  * Parse the given buffer as it were a chunk of XML data.
- * Invoke the specifIed callback each time the meaninful data is found.
+ * Invoke the specified callback each time the meaninful data is found.
  * This function returns number of bytes consumed from the bufer.
- * It will always be lesser than or equal to the specifIed _size.
+ * It will always be lesser than or equal to the specified _size.
  * The next invocation of this function must account the difference.
  */
 LIB61850_INTERNAL
