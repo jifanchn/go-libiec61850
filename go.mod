@@ -1,3 +1,3 @@
-module gitlab.weiheng-tech.com/SystemIntegrated/battery-pack-tools/61850-test
+module github.com/jifanchn/go-libiec61850
 
 go 1.18
