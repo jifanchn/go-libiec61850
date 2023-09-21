@@ -245,7 +245,7 @@ Socket_bind(Socket self, const char* srcAddress, int srcPort);
 /**
  * \brief connect to a server
  *
- * Connect to a server application identified by the address and port parameter.
+ * Connect to a server application identifIed by the address and port parameter.
  *
  * The "address" parameter may either be a hostname or an IP address. The IP address
  * has to be provided as a C string (e.g. "10.0.2.1").
@@ -280,7 +280,7 @@ Socket_checkAsyncConnectState(Socket self);
  * NOTE: The behaviour of this function changed with version 0.8!
  *
  * \param self the client, connection or server socket instance
- * \param buf the buffer where the read bytes are copied to
+ * \param buf the buffer where the read bytes are copIed to
  * \param size the maximum number of bytes to read (size of the provided buffer)
  *
  * \return the number of bytes read or -1 if an error occurred

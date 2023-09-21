@@ -1,5 +1,5 @@
 /*
- *  ied_connection_private.h
+ *  Ied_connection_private.h
  *
  *  Copyright 2013-2022 Michael Zillgith
  *
@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -21,11 +21,11 @@
  *  See COPYING file for the complete license text.
  */
 
-#ifndef IED_CONNECTION_PRIVATE_H_
-#define IED_CONNECTION_PRIVATE_H_
+#ifndef Ied_CONNECTION_PRIVATE_H_
+#define Ied_CONNECTION_PRIVATE_H_
 
-#ifndef DEBUG_IED_CLIENT
-#define DEBUG_IED_CLIENT 0
+#ifndef DEBUG_Ied_CLIENT
+#define DEBUG_Ied_CLIENT 0
 #endif
 
 #include "iec61850_common_internal.h"
@@ -104,34 +104,34 @@ struct sClientReportControlBlock {
 };
 
 LIB61850_INTERNAL bool
-iedConnection_doesControlObjectMatch(const char* objRef, const char* cntrlObj);
+IedConnection_doesControlObjectMatch(const char* objRef, const char* cntrlObj);
 
 LIB61850_INTERNAL void
-iedConnection_addControlClient(IedConnection self, ControlObjectClient control);
+IedConnection_addControlClient(IedConnection self, ControlObjectClient control);
 
 LIB61850_INTERNAL void
-iedConnection_removeControlClient(IedConnection self, ControlObjectClient control);
+IedConnection_removeControlClient(IedConnection self, ControlObjectClient control);
 
 LIB61850_INTERNAL bool
 clientReportControlBlock_updateValues(ClientReportControlBlock self, MmsValue* values);
 
 LIB61850_INTERNAL void
-iedConnection_handleReport(IedConnection self, MmsValue* value);
+IedConnection_handleReport(IedConnection self, MmsValue* value);
 
 LIB61850_INTERNAL IedClientError
-iedConnection_mapMmsErrorToIedError(MmsError mmsError);
+IedConnection_mapMmsErrorToIedError(MmsError mmsError);
 
 LIB61850_INTERNAL IedClientError
-iedConnection_mapDataAccessErrorToIedError(MmsDataAccessError mmsError);
+IedConnection_mapDataAccessErrorToIedError(MmsDataAccessError mmsError);
 
 LIB61850_INTERNAL IedConnectionOutstandingCall
-iedConnection_allocateOutstandingCall(IedConnection self);
+IedConnection_allocateOutstandingCall(IedConnection self);
 
 LIB61850_INTERNAL void
-iedConnection_releaseOutstandingCall(IedConnection self, IedConnectionOutstandingCall call);
+IedConnection_releaseOutstandingCall(IedConnection self, IedConnectionOutstandingCall call);
 
 LIB61850_INTERNAL IedConnectionOutstandingCall
-iedConnection_lookupOutstandingCall(IedConnection self, uint32_t invokeId);
+IedConnection_lookupOutstandingCall(IedConnection self, uint32_t invokeId);
 
 LIB61850_INTERNAL ClientReport
 ClientReport_create(void);
@@ -145,4 +145,4 @@ controlObjectClient_invokeCommandTerminationHandler(ControlObjectClient self);
 LIB61850_INTERNAL void
 ControlObjectClient_setLastApplError(ControlObjectClient self, LastApplError lastAppIError);
 
-#endif /* IED_CONNECTION_PRIVATE_H_ */
+#endif /* Ied_CONNECTION_PRIVATE_H_ */

@@ -75,7 +75,7 @@ PAL_API void
 Thread_destroy(Thread thread);
 
 /**
- * \brief Suspend execution of the Thread for the specified number of milliseconds
+ * \brief Suspend execution of the Thread for the specifIed number of milliseconds
  */
 PAL_API void
 Thread_sleep(int millies);

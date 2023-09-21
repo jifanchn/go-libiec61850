@@ -39,7 +39,7 @@ LIB61850_INTERNAL per_type_encoder_f OCTET_STRING_encode_uper;
 
 /*
  * This function clears the previous value of the OCTET STRING (if any)
- * and then allocates a new memory with the specified content (str/size).
+ * and then allocates a new memory with the specifIed content (str/size).
  * If size = -1, the size of the original string will be determined
  * using strlen(str).
  * If str equals to NULL, the function will silently clear the

@@ -26,7 +26,7 @@ LIB61850_INTERNAL ssize_t ber_fetch_length(int _is_constructed, const void *bufp
 
 /*
  * This function expects bufptr to be positioned over L in TLV.
- * It returns number of bytes occupied by L and V together, suitable
+ * It returns number of bytes occupIed by L and V together, suitable
  * for skipping. The function properly handles indefinite length.
  * RETURN VALUES:
  * 	Standard {-1,0,>0} convention.
@@ -39,7 +39,7 @@ LIB61850_INTERNAL ssize_t ber_skip_length(
  * This function serializes the length (L from TLV) in DER format.
  * It always returns number of bytes necessary to represent the length,
  * it is a caller's responsibility to check the return value
- * against the supplied buffer's size.
+ * against the supplIed buffer's size.
  */
 LIB61850_INTERNAL size_t der_tlv_length_serialize(ber_tlv_len_t len, void *bufptr, size_t size);
 

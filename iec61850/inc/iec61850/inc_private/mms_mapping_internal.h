@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -330,7 +330,7 @@ struct sMmsMapping {
     Semaphore isModelLockedMutex;
 #endif /* (CONFIG_MMS_THREADLESS_STACK != 1) */
 
-    IedServer iedServer;
+    IedServer IedServer;
 
     IedConnectionIndicationHandler connectionIndicationHandler;
     void* connectionIndicationHandlerParameter;

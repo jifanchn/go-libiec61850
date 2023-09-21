@@ -15,7 +15,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -72,7 +72,7 @@ LIB61850_API MmsValue*
 MmsVariableSpecification_getChildValue(MmsVariableSpecification* self, MmsValue* value, const char* childId);
 
 /**
- * \brief Get the child of self specified by its relative name
+ * \brief Get the child of self specifIed by its relative name
  *
  * \param self the MmsVariableSpecification instance
  * \param nameId the relative MMS name to the child MMS variable (with "$" separators!)

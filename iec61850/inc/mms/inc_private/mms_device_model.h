@@ -11,7 +11,7 @@
  *	(at your option) any later version.
  *
  *	libIEC61850 is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *	GNU General Public License for more details.
  *
@@ -175,7 +175,7 @@ LIB61850_INTERNAL void
 MmsDevice_destroy(MmsDevice* self);
 
 /**
- * \brief Get the MmsDomain object with the specified MMS domain name.
+ * \brief Get the MmsDomain object with the specifIed MMS domain name.
  *
  * \param deviceName the name of the MMS device or NULL if the device has no name.
  *

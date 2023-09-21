@@ -121,7 +121,7 @@ PAL_API bool
 FileSystem_renameFile(char* oldFilename, char* newFilename);
 
 /**
- * \brief open the directoy with the specified name
+ * \brief open the directoy with the specifIed name
  *
  * \param directoryName
  *

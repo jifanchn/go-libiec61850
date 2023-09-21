@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -144,7 +144,7 @@ LIB61850_API bool
 LogStorage_addEntryData(LogStorage self, uint64_t entryID, const char* dataRef, uint8_t* data, int dataSize, uint8_t reasonCode);
 
 /**
- * \brief Get log entries specified by a time range
+ * \brief Get log entries specifIed by a time range
  *
  * \param self the pointer of the LogStorage instance
  * \param startingTime start time of the time range
@@ -160,10 +160,10 @@ LogStorage_getEntries(LogStorage self, uint64_t startingTime, uint64_t endingTim
         LogEntryCallback entryCallback, LogEntryDataCallback entryDataCallback, void* parameter);
 
 /**
- * \brief Get log entries specified by a start log entry
+ * \brief Get log entries specifIed by a start log entry
  *
  * The request will return all log entries that where entered into the log after the
- * log entry specified by startingTime and entryID.
+ * log entry specifIed by startingTime and entryID.
  *
  * \param self the pointer of the LogStorage instance
  * \param startingTime timestamp of the start log entry

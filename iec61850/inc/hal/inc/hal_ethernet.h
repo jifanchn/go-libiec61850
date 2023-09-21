@@ -104,7 +104,7 @@ PAL_API void
 Ethernet_getInterfaceMACAddress(const char* interfaceId, uint8_t* addr);
 
 /**
- * \brief Create an Ethernet socket using the specified interface and
+ * \brief Create an Ethernet socket using the specifIed interface and
  * destination MAC address.
  *
  * \param interfaceId the ID of the Ethernet interface
@@ -148,7 +148,7 @@ PAL_API void
 Ethernet_addMulticastAddress(EthernetSocket ethSocket, uint8_t* multicastAddress);
 
 /*
- * \brief set a protocol filter for the specified etherType
+ * \brief set a protocol filter for the specifIed etherType
  *
  * NOTE: Implementation is not required but can improve the performance when the ethertype
  * filtering can be done on OS/network stack layer.

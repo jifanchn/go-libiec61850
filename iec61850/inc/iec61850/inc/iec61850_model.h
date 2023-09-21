@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -405,7 +405,7 @@ ModelNode_getObjectReference(ModelNode* self, char* objectReference);
  * \param self the model node instance
  * \param objectReference pointer to a buffer where to write the object reference string. If NULL
  *        is given the buffer is allocated by the function.
- * \param withoutIedName create object reference without IED name part
+ * \param withoutIedName create object reference without Ied name part
  *
  * \return the object reference string
  */
@@ -453,23 +453,23 @@ LIB61850_API LinkedList
 ModelNode_getChildren(ModelNode* self);
 
 /**
- * \brief Set the name of the IED
+ * \brief Set the name of the Ied
  *
  * This will change the default name (usualy "TEMPLATE") to a user configured values.
  * NOTE: This function has to be called before IedServer_create !
  *
  * \param model the IedModel instance
- * \param the name of the configured IED
+ * \param the name of the configured Ied
  */
 LIB61850_API void
-IedModel_setIedName(IedModel* self, const char* iedName);
+IedModel_setIedName(IedModel* self, const char* IedName);
 
 /**
  * \brief Lookup a model node by its object reference
  *
  * This function uses the full logical device name as part of the object reference
- * as it happens to appear on the wire. E.g. if IED name in SCL file would be "IED1"
- * and the logical device "WD1" the resulting LD name would be "IED1WD".
+ * as it happens to appear on the wire. E.g. if Ied name in SCL file would be "Ied1"
+ * and the logical device "WD1" the resulting LD name would be "Ied1WD".
  *
  * \param self the IedModel instance that holds the model node
  * \param objectReference the IEC 61850 object reference
@@ -486,8 +486,8 @@ IedModel_getSVControlBlock(IedModel* self, LogicalNode* parentLN, const char* sv
  * \brief Lookup a model node by its short (normalized) reference
  *
  * This version uses the object reference that does not contain the
- * IED name as part of the logical device name. This function is useful for
- * devices where the IED name can be configured.
+ * Ied name as part of the logical device name. This function is useful for
+ * devices where the Ied name can be configured.
  *
  * \param self the IedModel instance that holds the model node
  * \param objectReference the IEC 61850 object reference
@@ -500,7 +500,7 @@ IedModel_getModelNodeByShortObjectReference(IedModel* self, const char* objectRe
 /**
  * \brief Lookup a model node by its short address
  *
- * Short address is a 32 bit unsigned integer as specified in the "sAddr" attribute of
+ * Short address is a 32 bit unsigned integer as specifIed in the "sAddr" attribute of
  * the ICD file or in the configuration file.
  *
  * \param self the IedModel instance that holds the model node
@@ -580,10 +580,10 @@ LIB61850_API LogicalDevice*
 IedModel_getDevice(IedModel* self, const char* ldName);
 
 /**
- * \brief Lookup a data set in the IED model
+ * \brief Lookup a data set in the Ied model
  *
  * \param self IedModel instance
- * \param dataSetReference MMS mapping object reference! e.g. ied1Inverter/LLN0$dataset1
+ * \param dataSetReference MMS mapping object reference! e.g. Ied1Inverter/LLN0$dataset1
  *
  * \return The matching DataSet instance
  */

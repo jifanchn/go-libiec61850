@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -115,7 +115,7 @@ MmsConnection_createNonThreaded(TLSConfiguration tlsConfig);
  * \brief Callback function to intercept raw MMS messages
  *
  * IMPORTANT: the message buffer is only valid in the context of the the callback function. If the
- * message data is required elsewhere it has to be copied here!
+ * message data is required elsewhere it has to be copIed here!
  *
  * \param parameter user provided parameter that is passed to the callback function
  * \param message buffer of the message.
@@ -187,7 +187,7 @@ MmsConnection_setConnectTimeout(MmsConnection self, uint32_t timeoutInMs);
  *
  * \param self MmsConnection instance to operate on
  * \param handler the handler function to install for this client connection
- * \param parameter a user specified parameter that will be passed to the handler function on each
+ * \param parameter a user specifIed parameter that will be passed to the handler function on each
  *        invocation.
  */
 LIB61850_API void
@@ -293,7 +293,7 @@ MmsConnection_sendRawData(MmsConnection self, MmsError* mmsError, uint8_t* buffe
  * \brief Close the connection - not recommended
  *
  * This service simply closes the TCP socket without any hand-shaking with the server.
- * This behavior is not specified. Use with care!
+ * This behavior is not specifIed. Use with care!
  *
  * \param self MmsConnection instance to operate on
  */
@@ -1026,7 +1026,7 @@ MmsVariableAccessSpecification_destroy(MmsVariableAccessSpecification* self);
 /**
  * \brief Get the MMS local detail parameter (local detail means maximum MMS PDU size).
  *
- * This defaults to 65000 (or the value specified in the stack_config.h file.
+ * This defaults to 65000 (or the value specifIed in the stack_config.h file.
  * This function should not be called after a successful connection attempt.
  *
  * \param  self MmsConnection instance to operate on
@@ -1094,7 +1094,7 @@ MmsConnection_getServerStatusAsync(MmsConnection self, uint32_t* usedInvokeId, M
  *******************************************************************************/
 
 typedef void
-(*MmsFileDirectoryHandler) (void* parameter, char* filename, uint32_t size, uint64_t lastModified);
+(*MmsFileDirectoryHandler) (void* parameter, char* filename, uint32_t size, uint64_t lastModifIed);
 
 /**
  * \brief Callback handler for the get file directory service
@@ -1104,7 +1104,7 @@ typedef void
  * \ref mmsError != MMS_ERROR_NONE and moreFollows = false.
  */
 typedef void
-(*MmsConnection_FileDirectoryHandler) (uint32_t invokeId, void* parameter, MmsError mmsError, char* filename, uint32_t size, uint64_t lastModfified,
+(*MmsConnection_FileDirectoryHandler) (uint32_t invokeId, void* parameter, MmsError mmsError, char* filename, uint32_t size, uint64_t lastModfifIed,
         bool moreFollows);
 
 typedef void
@@ -1138,10 +1138,10 @@ typedef void
  */
 LIB61850_API int32_t
 MmsConnection_fileOpen(MmsConnection self, MmsError* mmsError, const char* filename, uint32_t initialPosition,
-        uint32_t* fileSize, uint64_t* lastModified);
+        uint32_t* fileSize, uint64_t* lastModifIed);
 
 typedef void
-(*MmsConnection_FileOpenHandler) (uint32_t invokeId, void* parameter, MmsError mmsError, int32_t frsmId, uint32_t fileSize, uint64_t lastModified);
+(*MmsConnection_FileOpenHandler) (uint32_t invokeId, void* parameter, MmsError mmsError, int32_t frsmId, uint32_t fileSize, uint64_t lastModifIed);
 
 LIB61850_API void
 MmsConnection_fileOpenAsync(MmsConnection self, uint32_t* usedInvokeId, MmsError* mmsError, const char* filename, uint32_t initialPosition, MmsConnection_FileOpenHandler handler,
@@ -1166,7 +1166,7 @@ LIB61850_API void
 MmsConnection_fileReadAsync(MmsConnection self, uint32_t* usedInvokeId, MmsError* mmsError, int32_t frsmId, MmsConnection_FileReadHandler handler, void* parameter);
 
 /**
- * \brief close the file with the specified frsmID
+ * \brief close the file with the specifIed frsmID
  *
  * \param self MmsConnection instance to operate on
  * \param mmsError user provided variable to store error code
@@ -1179,7 +1179,7 @@ LIB61850_API void
 MmsConnection_fileCloseAsync(MmsConnection self, uint32_t* usedInvokeId, MmsError* mmsError, uint32_t frsmId, MmsConnection_GenericServiceHandler handler, void* parameter);
 
 /**
- * \brief delete the file with the specified name
+ * \brief delete the file with the specifIed name
  *
  * \param self MmsConnection instance to operate on
  * \param mmsError user provided variable to store error code
@@ -1193,7 +1193,7 @@ MmsConnection_fileDeleteAsync(MmsConnection self, uint32_t* usedInvokeId, MmsErr
         MmsConnection_GenericServiceHandler handler, void* parameter);
 
 /**
- * \brief rename the file with the specified name
+ * \brief rename the file with the specifIed name
  *
  * \param self MmsConnection instance to operate on
  * \param mmsError user provided variable to store error code

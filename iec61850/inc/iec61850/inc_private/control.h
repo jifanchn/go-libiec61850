@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  libIEC61850 is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implIed warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -56,7 +56,7 @@ typedef struct sControlObject ControlObject;
 struct sControlObject
 {
     MmsDomain* mmsDomain;
-    IedServer iedServer;
+    IedServer IedServer;
     char* lnName;
     char* name;
 
@@ -141,7 +141,7 @@ struct sControlObject
 };
 
 LIB61850_INTERNAL ControlObject*
-ControlObject_create(IedServer iedServer, MmsDomain* domain, char* lnName, char* name, MmsVariableSpecification* operSpec);
+ControlObject_create(IedServer IedServer, MmsDomain* domain, char* lnName, char* name, MmsVariableSpecification* operSpec);
 
 LIB61850_INTERNAL void
 ControlObject_initialize(ControlObject* self);
