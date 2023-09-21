@@ -1,0 +1,406 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SCL xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sac="http://www.sac-china.com" xmlns="http://www.iec.ch/61850/2003/SCL" xsi:schemaLocation="http://www.iec.ch/61850/2003/SCL SCL.xsd">
+   <Header revision="1.0" version="1.0" toolID="NariConfigTool" id="Default Substation" nameStructure="IEDName"/>
+   <Communication>
+      <SubNetwork name="MMS_A">
+         <ConnectedAP iedName="Huwor_JF204" apName="S1">
+            <Address>
+               <P type="IP">127.0.0.1</P>
+               <P type="IP-SUBNET">255.255.255.0</P>
+            </Address>
+         </ConnectedAP>
+      </SubNetwork>
+   </Communication>
+   <IED configVersion="1.0" desc="GIS局放在线监测" type="S61850" name="Huwor_JF204">
+      <Private type="IED virtual terminal conection CRC"/>
+      <Services>
+         <DynAssociation/>
+         <SettingGroups>
+            <SGEdit/>
+            <ConfSG/>
+         </SettingGroups>
+         <GetDirectory/>
+         <GetDataObjectDefinition/>
+         <DataObjectDirectory/>
+         <GetDataSetValue/>
+         <DataSetDirectory/>
+         <ConfDataSet max="60" maxAttributes="2000"/>
+         <ReadWrite/>
+         <ConfReportControl max="40"/>
+         <GetCBValues/>
+         <ReportSettings optFields="Fix" bufTime="Fix" cbName="Fix" rptID="Fix" trgOps="Fix" intgPd="Fix" datSet="Fix"/>
+         <LogSettings logEna="Fix" cbName="Fix" trgOps="Fix" intgPd="Fix" datSet="Fix"/>
+         <GSESettings appID="Fix" cbName="Fix" dataLabel="Fix" datSet="Fix"/>
+         <FileHandling/>
+      </Services>
+      <AccessPoint clock="false" router="false" name="S1">
+         <Server desc="servers" timeout="60">
+            <Authentication/>
+            <LDevice inst="MONT">
+               <LN0 inst="" lnType="LLN01" lnClass="LLN0">
+                  <DataSet desc="遥测数据集" name="dsAin1">
+                     <FCDA doName="AvDsch" lnInst="1" ldInst="MONT" fc="MX" lnClass="SPDC"/>
+                     <FCDA doName="MaxDsch" lnInst="1" ldInst="MONT" fc="MX" lnClass="SPDC"/>
+                     <FCDA doName="DschCnt" lnInst="1" ldInst="MONT" fc="MX" lnClass="SPDC"/>
+                     <FCDA doName="MaxDschPh" lnInst="1" ldInst="MONT" fc="MX" lnClass="SPDC"/>
+                     <FCDA doName="DschQ" lnInst="1" ldInst="MONT" fc="MX" lnClass="SPDC"/>
+                  </DataSet>
+                  <DataSet desc="遥信数据集" name="dsDin1">
+                     <FCDA doName="PaDschAlm" lnInst="1" ldInst="MONT" fc="ST" lnClass="SPDC"/>
+                     <FCDA doName="DschType" lnInst="1" ldInst="MONT" fc="ST" lnClass="SPDC"/>
+                     <FCDA doName="MoDevComF" lnInst="1" ldInst="MONT" fc="ST" lnClass="SPDC"/>
+                  </DataSet>
+                  <DataSet desc="rcd" name="dsRDRE">
+                     <FCDA doName="RcdMade" lnInst="1" ldInst="MONT" fc="ST" lnClass="RDRE"/>
+                     <FCDA doName="WaveFileNum" lnInst="1" ldInst="MONT" fc="ST" lnClass="RDRE"/>
+                  </DataSet>
+                  <ReportControl bufTime="12000" rptID="MONT/LLN0$BR$dsRDRE" confRev="0" intgPd="12000" datSet="dsRDRE" name="brcbRDRE" buffered="true">
+                     <TrgOps qchg="true" period="true" dupd="true" dchg="true"/>
+                     <OptFields configRef="true" dataSet="true" reasonCode="true" segmentation="true" entryID="true" bufOvfl="true" seqNum="true" dataRef="true" timeStamp="true"/>
+                     <RptEnabled max="16"/>
+                  </ReportControl>
+                  <ReportControl rptID="MONT/LLN0$RP$urcbAin1p" confRev="1" intgPd="60000" datSet="dsAin1" name="urcbAin1p" buffered="false">
+                     <TrgOps qchg="true" period="true" dchg="true"/>
+                     <OptFields configRef="true" dataSet="true" reasonCode="true" entryID="true" seqNum="true" dataRef="true" timeStamp="true"/>
+                     <RptEnabled max="16"/>
+                  </ReportControl>
+                  <ReportControl bufTime="200" rptID="MONT/LLN0$BR$dsDin1" confRev="1" intgPd="120000" datSet="dsDin1" name="brcbDin1p" buffered="true">
+                     <TrgOps qchg="true" period="true" dchg="true"/>
+                     <OptFields configRef="true" dataSet="true" reasonCode="true" entryID="true" seqNum="true" dataRef="true" timeStamp="true"/>
+                     <RptEnabled max="16"/>
+                  </ReportControl>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|管理逻辑节点|模式" name="Mod">
+                     <DAI name="ctlModel">
+                        <Val>status-only</Val>
+                     </DAI>
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|管理逻辑节点|行为状态" name="Beh">
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|管理逻辑节点|健康状态" name="Health">
+                     <DAI name="stVal">
+                        <Val>Ok</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|管理逻辑节点|铭牌" name="NamPlt">
+                     <DAI name="dU">
+                        <Val>500kV|习水站|特高频局放在线监测装置|管理逻辑节点|铭牌</Val>
+                     </DAI>
+                  </DOI>
+                  <SettingControl actSG="1" numOfSGs="15"/>
+               </LN0>
+               <LN ext:uri="" inst="1" ext:devid="" lnType="LPHD1" lnClass="LPHD">
+                  <DOI desc="500kV|习水站|超高频局放在线监测装置|物理装置逻辑节点" name="PhyNam">
+                     <DAI name="dU">
+                        <Val>500kV|习水站|超高频局放在线监测装置|物理装置逻辑节点</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="Ok" name="PhyHealth">
+                     <DAI name="stVal">
+                        <Val>Ok</Val>
+                     </DAI>
+                  </DOI>
+               </LN>
+               <LN ext:uri="" inst="1" ext:devid="" lnType="PD_RDRE" lnClass="RDRE">
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|模式" name="Mod">
+                     <DAI name="ctlModel">
+                        <Val>status-only</Val>
+                     </DAI>
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|行为状态" name="Beh">
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|健康状态" name="Health">
+                     <DAI name="stVal">
+                        <Val>Ok</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|铭牌" name="NamPlt">
+                     <DAI name="dU">
+                        <Val>500kV|习水站|特高频局放在线监测装置|铭牌</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|谱图文件生成标志" name="RcdMade">
+                     <DAI name="dU">
+                        <Val>500kV|习水站|特高频局放在线监测装置|谱图文件生成标志</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kV|习水站|特高频局放在线监测装置|谱图文件生成序号" name="WaveFileNum">
+                     <DAI name="dU">
+                        <Val>500kV|习水站|特高频局放在线监测装置|谱图文件生成序号</Val>
+                     </DAI>
+                  </DOI>
+               </LN>
+               <LN desc="500kVⅡ母侧50231隔离刀闸A相" ext:uri="" inst="1" ext:devid="" lnType="PD_SPDC" lnClass="SPDC">
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|模式" name="Mod">
+                     <DAI name="ctlModel">
+                        <Val>status-only</Val>
+                     </DAI>
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|行为状态" name="Beh">
+                     <DAI name="stVal">
+                        <Val>on</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|健康状态" name="Health">
+                     <DAI name="stVal">
+                        <Val>Ok</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|铭牌" name="NamPlt">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|铭牌</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|局部放电告警" name="PaDschAlm">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|局部放电告警</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|放电类型" name="DschType">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|放电类型</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|监测设备通信异常" name="MoDevComF">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|监测设备通信异常</Val>
+                     </DAI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|放电强度均值" name="AvDsch">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|放电强度均值</Val>
+                     </DAI>
+                     <SDI name="sVC">
+                        <DAI name="scaleFactor">
+                           <Val>1</Val>
+                        </DAI>
+                        <DAI name="offset">
+                           <Val>0</Val>
+                        </DAI>
+                     </SDI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|放电强度峰值" name="MaxDsch">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|放电强度峰值</Val>
+                     </DAI>
+                     <SDI name="sVC">
+                        <DAI name="scaleFactor">
+                           <Val>1</Val>
+                        </DAI>
+                        <DAI name="offset">
+                           <Val>0</Val>
+                        </DAI>
+                     </SDI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|放电次数" name="DschCnt">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|放电次数</Val>
+                     </DAI>
+                     <SDI name="sVC">
+                        <DAI name="scaleFactor">
+                           <Val>1</Val>
+                        </DAI>
+                        <DAI name="offset">
+                           <Val>0</Val>
+                        </DAI>
+                     </SDI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|最大放电时所对应的相位" name="MaxDschPh">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|最大放电时所对应的相位</Val>
+                     </DAI>
+                     <SDI name="sVC">
+                        <DAI name="scaleFactor">
+                           <Val>1</Val>
+                        </DAI>
+                        <DAI name="offset">
+                           <Val>0</Val>
+                        </DAI>
+                     </SDI>
+                  </DOI>
+                  <DOI desc="500kVⅡ母侧50231隔离刀闸A相|放电幅值（Q）" name="DschQ">
+                     <DAI name="dU">
+                        <Val>500kVⅡ母侧50231隔离刀闸A相|放电幅值（Q）</Val>
+                     </DAI>
+                     <SDI name="sVC">
+                        <DAI name="scaleFactor">
+                           <Val>1</Val>
+                        </DAI>
+                        <DAI name="offset">
+                           <Val>0</Val>
+                        </DAI>
+                     </SDI>
+                  </DOI>
+               </LN>
+            </LDevice>
+         </Server>
+      </AccessPoint>
+   </IED>
+   <DataTypeTemplates>
+      <LNodeType id="LLN01" lnClass="LLN0">
+         <DO type="ENC1_Mod" name="Mod"/>
+         <DO type="ENS1_Beh" name="Beh"/>
+         <DO type="ENS1_Health" name="Health"/>
+         <DO type="LPL1_NamPlt" name="NamPlt"/>
+      </LNodeType>
+      <LNodeType id="LPHD1" lnClass="LPHD">
+         <DO type="DPL1_PhyNam" name="PhyNam"/>
+         <DO type="ENS1_Health" name="PhyHealth"/>
+         <DO type="SPS1_Proxy" name="Proxy"/>
+      </LNodeType>
+      <LNodeType desc="谱图" id="PD_RDRE" lnClass="RDRE">
+         <DO desc="模式" type="ENC1_Mod" name="Mod"/>
+         <DO desc="性能" type="ENS1_Beh" name="Beh"/>
+         <DO desc="健康" type="ENS1_Health" name="Health"/>
+         <DO desc="铭牌" type="LPL1_NamPlt" name="NamPlt"/>
+         <DO desc="谱图文件生成标志" type="SPS1" name="RcdMade"/>
+         <DO desc="谱图文件生成序号" type="SPS2" name="WaveFileNum"/>
+      </LNodeType>
+      <LNodeType id="PD_SPDC" lnClass="SPDC">
+         <DO desc="Mod专用" type="ENC1_Mod" name="Mod"/>
+         <DO desc="Beh专用" type="ENS1_Beh" name="Beh"/>
+         <DO desc="Health专用" type="ENS1_Health" name="Health"/>
+         <DO desc="NamPlt专用" type="LPL1_NamPlt" name="NamPlt"/>
+         <DO desc="局部放电告警" type="SPS1" name="PaDschAlm"/>
+         <DO desc="放电类型" type="ENS1" name="DschType"/>
+         <DO desc="监测设备通信异常" type="SPS1" name="MoDevComF"/>
+         <DO desc="放电强度均值" type="MV2" name="AvDsch"/>
+         <DO desc="放电强度峰值" type="MV2" name="MaxDsch"/>
+         <DO desc="放电次数" type="MV2" name="DschCnt"/>
+         <DO desc="最大放电时所对应的相位" type="MV2" name="MaxDschPh"/>
+         <DO desc="放电幅值（Q）" type="MV2" name="DschQ"/>
+      </LNodeType>
+      <DOType desc="Mod专用" id="ENC1_Mod" cdc="INC">
+         <DA bType="Enum" type="Mod" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+         <DA bType="Enum" type="ctlModel" name="ctlModel" fc="CF" dchg="true"/>
+      </DOType>
+      <DOType desc="Beh专用" id="ENS1_Beh" cdc="INS">
+         <DA bType="Enum" type="Beh" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+      </DOType>
+      <DOType desc="Health专用" id="ENS1_Health" cdc="INS">
+         <DA bType="Enum" type="Health" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+      </DOType>
+      <DOType desc="NamPlt专用" id="LPL1_NamPlt" cdc="LPL">
+         <DA bType="VisString255" name="vendor" fc="DC"/>
+         <DA bType="VisString255" name="swRev" fc="DC"/>
+         <DA bType="VisString255" name="d" fc="DC"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DOType desc="PhyNam专用" id="DPL1_PhyNam" cdc="DPL">
+         <DA bType="VisString255" name="vendor" fc="DC"/>
+         <DA bType="VisString255" name="swRev" fc="DC"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DOType desc="Proxy专用" id="SPS1_Proxy" cdc="SPS">
+         <DA bType="BOOLEAN" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+      </DOType>
+      <DOType id="MV2" cdc="MV">
+         <DA bType="Struct" type="AnalogueValue2" name="mag" fc="MX" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="MX"/>
+         <DA bType="Timestamp" name="t" fc="MX"/>
+         <DA bType="Struct" type="ScaledValueConfig1" name="sVC" fc="CF" dchg="true"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DOType id="SPS1" cdc="SPS">
+         <DA bType="BOOLEAN" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DOType id="SPS2" cdc="SPS">
+         <DA bType="INT32" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DOType desc="扩展状况量1" id="ENS1" cdc="INS">
+         <DA bType="Enum" type="PDTYPE_ENS" name="stVal" fc="ST" dchg="true"/>
+         <DA qchg="true" bType="Quality" name="q" fc="ST"/>
+         <DA bType="Timestamp" name="t" fc="ST"/>
+         <DA bType="Unicode255" name="dU" fc="DC"/>
+      </DOType>
+      <DAType id="AnalogueValue1">
+         <BDA bType="INT32" name="i"/>
+      </DAType>
+      <DAType id="AnalogueValue2">
+         <BDA bType="FLOAT32" name="f"/>
+      </DAType>
+      <DAType id="ScaledValueConfig1">
+         <BDA bType="FLOAT32" name="scaleFactor"/>
+         <BDA bType="FLOAT32" name="offset"/>
+      </DAType>
+      <DAType id="Originator1">
+         <BDA bType="Enum" type="orCategory" name="orCat"/>
+         <BDA bType="Octet64" name="orIdent"/>
+      </DAType>
+      <EnumType desc="Mod" id="Mod">
+         <EnumVal ord="1">on</EnumVal>
+         <EnumVal ord="2">blocked</EnumVal>
+         <EnumVal ord="3">test</EnumVal>
+         <EnumVal ord="4">test/blocked</EnumVal>
+         <EnumVal ord="5">off</EnumVal>
+      </EnumType>
+      <EnumType id="Beh">
+         <EnumVal ord="1">on</EnumVal>
+         <EnumVal ord="2">blocked</EnumVal>
+         <EnumVal ord="3">test</EnumVal>
+         <EnumVal ord="4">test/blocked</EnumVal>
+         <EnumVal ord="5">off</EnumVal>
+      </EnumType>
+      <EnumType id="ctlModel">
+         <EnumVal ord="0">status-only</EnumVal>
+         <EnumVal ord="1">direct-with-normal-security</EnumVal>
+         <EnumVal ord="2">sbo-with-normal-security</EnumVal>
+         <EnumVal ord="3">direct-with-enhanced-security</EnumVal>
+         <EnumVal ord="4">sbo-with-enhanced-security</EnumVal>
+      </EnumType>
+      <EnumType id="Health">
+         <EnumVal ord="1">Ok</EnumVal>
+         <EnumVal ord="2">Warning</EnumVal>
+         <EnumVal ord="3">Alarm</EnumVal>
+      </EnumType>
+      <EnumType id="orCategory">
+         <EnumVal ord="0">not-supported</EnumVal>
+         <EnumVal ord="1">bay-control</EnumVal>
+         <EnumVal ord="2">station-control</EnumVal>
+         <EnumVal ord="3">remote-control</EnumVal>
+         <EnumVal ord="4">automatic-bay</EnumVal>
+         <EnumVal ord="5">automatic-station</EnumVal>
+         <EnumVal ord="6">automatic-remote</EnumVal>
+         <EnumVal ord="7">maintenance</EnumVal>
+         <EnumVal ord="8">process</EnumVal>
+      </EnumType>
+      <EnumType id="PDTYPE_ENS">
+         <EnumVal ord="0">0</EnumVal>
+         <EnumVal ord="1">1</EnumVal>
+         <EnumVal ord="2">2</EnumVal>
+         <EnumVal ord="3">3</EnumVal>
+         <EnumVal ord="4">4</EnumVal>
+         <EnumVal ord="5">5</EnumVal>
+         <EnumVal ord="6">6</EnumVal>
+         <EnumVal ord="7">7</EnumVal>
+      </EnumType>
+   </DataTypeTemplates>
+</SCL>
