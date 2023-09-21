@@ -24,7 +24,7 @@ func (client *IedClient) Connect(hostname string, tcpPort int) error {
 
 	var clientError C.IedClientError
 	C.IedConnection_connect(client.connection, &clientError, cHostname, C.int(tcpPort))
-	if clientError != C.Ied_ERROR_OK {
+	if clientError != C.IED_ERROR_OK {
 		return fmt.Errorf("failed to connect to %s:%d, clientError: %v", hostname, tcpPort, clientError)
 	}
 	return nil
@@ -37,7 +37,7 @@ func (client *IedClient) ReadObject(objectRef string) (float64, error) {
 	var clientError C.IedClientError
 	value := C.IedConnection_readObject(client.connection, &clientError, cObjectRef, C.IEC61850_FC_MX)
 
-	if clientError != C.Ied_ERROR_OK {
+	if clientError != C.IED_ERROR_OK {
 		return 0, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, clientError)
 	}
 
