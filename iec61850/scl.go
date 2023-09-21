@@ -60,11 +60,19 @@ type DOI struct {
 	Desc string `xml:"desc,attr"`
 	Name string `xml:"name,attr"`
 	DAI  []DAI  `xml:"DAI"`
+	SDI  []SDI  `xml:"SDI"`
 }
 
 type DAI struct {
 	Name string `xml:"name,attr"`
 	Val  Val    `xml:"Val"`
+	SDI  []SDI  `xml:"SDI"` // 新增
+}
+
+type SDI struct {
+	Name string `xml:"name,attr"`
+	DAI  []DAI  `xml:"DAI"`
+	SDI  []SDI  `xml:"SDI"` // 递归地包含SDI
 }
 
 type Val struct {
@@ -102,6 +110,7 @@ type LNodeType struct {
 type DO struct {
 	Name string `xml:"name,attr"`
 	Type string `xml:"type,attr"`
+	DA   []DA   `xml:"DA"`
 }
 
 type DOType struct {
@@ -145,71 +154,86 @@ type SDO struct {
 	DA   []DA   `xml:"DA"`
 }
 
-func (scl *SCL) PrintHierarchy() {
+func (scl *SCL) Print() {
 	for _, ied := range scl.IED {
-		ied.printHierarchy(0)
+		ied.Print(0)
 	}
-	scl.DataTypeTemplates.printDataTypeTemplates(0)
+	scl.DataTypeTemplates.Print(0)
 }
 
-func (ied *IED) printHierarchy(depth int) {
-	fmt.Printf("%sName: %s, Type: %s, Desc: %s\n", getIndentation(depth), ied.Name, ied.Type, ied.Desc)
-
+func (ied *IED) Print(depth int) {
+	fmt.Printf("%sIED Name: %s, Type: %s, Desc: %s\n", getIndentation(depth), ied.Name, ied.Type, ied.Desc)
 	for _, ap := range ied.AccessPoint {
 		fmt.Printf("%sAccessPoint: %s\n", getIndentation(depth+1), ap.Name)
 		for _, ld := range ap.LDevice {
 			fmt.Printf("%sLDevice: %s\n", getIndentation(depth+2), ld.Inst)
-			ld.LN0.printHierarchy(depth + 3)
 			for _, ln := range ld.LN {
-				ln.printHierarchy(depth + 3)
+				ln.Print(depth + 3)
 			}
 		}
 	}
 }
 
-func (ln *LN) printHierarchy(depth int) {
-	if ln.Inst != "" {
-		fmt.Printf("%sLN: %s, Prefix: %s, LnType: %s, LnClass: %s\n", getIndentation(depth), strings.TrimSpace(ln.Inst), strings.TrimSpace(ln.Prefix), strings.TrimSpace(ln.LnType), strings.TrimSpace(ln.LnClass))
-	}
-
+func (ln *LN) Print(depth int) {
+	fmt.Printf("%sLN Inst: %s, Prefix: %s, LnType: %s, LnClass: %s\n", getIndentation(depth), ln.Inst, ln.Prefix, ln.LnType, ln.LnClass)
 	for _, doi := range ln.DOI {
-		if doi.Name != "" {
-			fmt.Printf("%sDOI: %s, Desc: %s\n", getIndentation(depth+1), strings.TrimSpace(doi.Name), strings.TrimSpace(doi.Desc))
-			for _, dai := range doi.DAI {
-				if dai.Name != "" {
-					fmt.Printf("%sDAI: %s\n", getIndentation(depth+2), strings.TrimSpace(dai.Name))
-					dai.Val.printHierarchy(depth + 3)
-				}
-			}
-		}
+		doi.Print(depth + 1)
 	}
 }
 
-func (val *Val) printHierarchy(depth int) {
+func (doi *DOI) Print(depth int) {
+	fmt.Printf("%sDOI Name: %s, Desc: %s\n", getIndentation(depth), doi.Name, doi.Desc)
+	for _, dai := range doi.DAI {
+		dai.Print(depth + 1)
+	}
+	// Here, assuming you also want to print SDIs if they are included in your model
+	for _, sdi := range doi.SDI {
+		sdi.Print(depth + 1)
+	}
+}
+
+func (dai *DAI) Print(depth int) {
+	fmt.Printf("%sDAI Name: %s, Value: %s\n", getIndentation(depth), dai.Name, dai.Val.Value)
+	for _, sdi := range dai.SDI {
+		sdi.Print(depth + 1)
+	}
+}
+
+func (sdi *SDI) Print(depth int) {
+	// Print SDI and its related DAIs
+	// Note: If SDIs can have nested SDIs, this function will need recursion
+	fmt.Printf("%sSDI: %s\n", getIndentation(depth), sdi.Name)
+	for _, dai := range sdi.DAI {
+		fmt.Printf("%sDAI: %s\n", getIndentation(depth+1), dai.Name)
+		dai.Val.Print(depth + 2)
+	}
+}
+
+func (val *Val) Print(depth int) {
 	fmt.Printf("%sValue: %s\n", getIndentation(depth), val.Value)
 }
 
-func (dt DataTypeTemplates) printDataTypeTemplates(depth int) {
+func (dt DataTypeTemplates) Print(depth int) {
 	fmt.Printf("%sDataTypeTemplates:\n", getIndentation(depth))
 	for _, lnt := range dt.LNodeType {
 		fmt.Printf("%sLNodeType: %s\n", getIndentation(depth+1), lnt.ID)
 		for _, dt := range lnt.DO {
-			printDO(dt, depth+2)
+			dt.Print(depth + 2)
 		}
 	}
 	for _, dot := range dt.DOType {
 		fmt.Printf("%sDOType: %s\n", getIndentation(depth+1), dot.ID)
 		for _, da := range dot.DA {
-			printDA(da, depth+2)
+			da.Print(depth + 2)
 		}
 	}
 	for _, dat := range dt.DAType {
 		fmt.Printf("%sDAType: %s\n", getIndentation(depth+1), dat.ID)
 		for _, bda := range dat.BDA {
-			printBDA(bda, depth+2)
+			bda.Print(depth + 2)
 		}
 		for _, da := range dat.DA {
-			printDA(da, depth+2)
+			da.Print(depth + 2)
 		}
 	}
 	for _, et := range dt.EnumType {
@@ -220,22 +244,22 @@ func (dt DataTypeTemplates) printDataTypeTemplates(depth int) {
 	}
 }
 
-func printDO(do DO, depth int) {
+func (do DO) Print(depth int) {
 	if do.Name != "" && do.Type != "" {
 		fmt.Printf("%sDO: %s, Type: %s\n", getIndentation(depth), do.Name, do.Type)
 	}
 }
 
-func printDA(da DA, depth int) {
+func (da DA) Print(depth int) {
 	if da.Name != "" && da.Type != "" {
 		fmt.Printf("%sDA: %s, Type: %s\n", getIndentation(depth), da.Name, da.Type)
 		for _, subDA := range da.DA {
-			printDA(subDA, depth+1)
+			subDA.Print(depth + 1)
 		}
 	}
 }
 
-func printBDA(bda BDA, depth int) {
+func (bda BDA) Print(depth int) {
 	if bda.Name != "" && bda.Type != "" {
 		fmt.Printf("%sBDA: %s, Type: %s\n", getIndentation(depth), bda.Name, bda.Type)
 	}

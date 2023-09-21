@@ -10,5 +10,5 @@ func TestIEC61850LoadICD(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	scl.PrintHierarchy()
+	scl.Print()
 }
