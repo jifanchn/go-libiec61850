@@ -52,7 +52,8 @@ const (
 	IEC61850_FC_NONE FunctionalConstraint = -1
 )
 
-func (e C.IedClientError) String() string {
+// Err get real ied error type
+func Err(e C.IedClientError) string {
 	switch e {
 	case C.IED_ERROR_OK:
 		return "IED_ERROR_OK"

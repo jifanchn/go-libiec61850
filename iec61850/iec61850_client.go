@@ -37,7 +37,7 @@ func (client *IedClient) ReadObjectFloatValue(objectRef string, constraint Funct
 	value := C.IedConnection_readFloatValue(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
 
 	if clientError != C.IED_ERROR_OK {
-		return 0, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, clientError)
+		return 0, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
 	}
 
 	return float64(value), nil
