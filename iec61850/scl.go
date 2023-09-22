@@ -45,7 +45,14 @@ type AccessPoint struct {
 type LDevice struct {
 	Inst string `xml:"inst,attr"`
 	LN   []LN   `xml:"LN"`
-	LN0  LN     `xml:"LN0"`
+	LN0  LN0    `xml:"LN0"`
+}
+
+type LN0 struct {
+	Inst     string    `xml:"inst,attr"`
+	LnType   string    `xml:"lnType,attr"`
+	LnClass  string    `xml:"lnClass,attr"`
+	DataSets []DataSet `xml:"DataSet"`
 }
 
 type LN struct {
