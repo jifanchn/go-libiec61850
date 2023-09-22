@@ -1,4 +1,4 @@
-package iec61850
+package scl_xml
 
 import (
 	"encoding/xml"
@@ -25,140 +25,140 @@ type VisString255 string
 type Unicode255 string
 
 type SCL struct {
-	IED               []IED             `xml:"IED"`
-	DataTypeTemplates DataTypeTemplates `xml:"DataTypeTemplates"`
+	IED               []IED             `scl_xml:"IED"`
+	DataTypeTemplates DataTypeTemplates `scl_xml:"DataTypeTemplates"`
 }
 
 type IED struct {
-	Name          string        `xml:"name,attr"`
-	Type          string        `xml:"type,attr"`
-	Desc          string        `xml:"desc,attr"`
-	ConfigVersion string        `xml:"configVersion,attr"`
-	AccessPoint   []AccessPoint `xml:"AccessPoint"`
+	Name          string        `scl_xml:"name,attr"`
+	Type          string        `scl_xml:"type,attr"`
+	Desc          string        `scl_xml:"desc,attr"`
+	ConfigVersion string        `scl_xml:"configVersion,attr"`
+	AccessPoint   []AccessPoint `scl_xml:"AccessPoint"`
 }
 
 type AccessPoint struct {
-	Name    string    `xml:"name,attr"`
-	LDevice []LDevice `xml:"Server>LDevice"`
+	Name    string    `scl_xml:"name,attr"`
+	LDevice []LDevice `scl_xml:"Server>LDevice"`
 }
 
 type LDevice struct {
-	Inst string `xml:"inst,attr"`
-	LN   []LN   `xml:"LN"`
-	LN0  LN0    `xml:"LN0"`
+	Inst string `scl_xml:"inst,attr"`
+	LN   []LN   `scl_xml:"LN"`
+	LN0  LN0    `scl_xml:"LN0"`
 }
 
 type LN0 struct {
-	Inst     string    `xml:"inst,attr"`
-	LnType   string    `xml:"lnType,attr"`
-	LnClass  string    `xml:"lnClass,attr"`
-	DataSets []DataSet `xml:"DataSet"`
+	Inst     string    `scl_xml:"inst,attr"`
+	LnType   string    `scl_xml:"lnType,attr"`
+	LnClass  string    `scl_xml:"lnClass,attr"`
+	DataSets []DataSet `scl_xml:"DataSet"`
 }
 
 type LN struct {
-	Inst    string `xml:"inst,attr"`
-	Prefix  string `xml:"prefix,attr"`
-	LnType  string `xml:"lnType,attr"`
-	LnClass string `xml:"lnClass,attr"`
-	DOI     []DOI  `xml:"DOI"`
+	Inst    string `scl_xml:"inst,attr"`
+	Prefix  string `scl_xml:"prefix,attr"`
+	LnType  string `scl_xml:"lnType,attr"`
+	LnClass string `scl_xml:"lnClass,attr"`
+	DOI     []DOI  `scl_xml:"DOI"`
 }
 
 type DOI struct {
-	Desc string `xml:"desc,attr"`
-	Name string `xml:"name,attr"`
-	DAI  []DAI  `xml:"DAI"`
-	SDI  []SDI  `xml:"SDI"`
+	Desc string `scl_xml:"desc,attr"`
+	Name string `scl_xml:"name,attr"`
+	DAI  []DAI  `scl_xml:"DAI"`
+	SDI  []SDI  `scl_xml:"SDI"`
 }
 
 type DAI struct {
-	Name string `xml:"name,attr"`
-	Val  Val    `xml:"Val"`
-	SDI  []SDI  `xml:"SDI"` // 新增
+	Name string `scl_xml:"name,attr"`
+	Val  Val    `scl_xml:"Val"`
+	SDI  []SDI  `scl_xml:"SDI"` // 新增
 }
 
 type SDI struct {
-	Name string `xml:"name,attr"`
-	DAI  []DAI  `xml:"DAI"`
-	SDI  []SDI  `xml:"SDI"` // 递归地包含SDI
+	Name string `scl_xml:"name,attr"`
+	DAI  []DAI  `scl_xml:"DAI"`
+	SDI  []SDI  `scl_xml:"SDI"` // 递归地包含SDI
 }
 
 type Val struct {
-	Value string `xml:",chardata"`
+	Value string `scl_xml:",chardata"`
 }
 
 type DataSet struct {
-	Name string      `xml:"name,attr"`
-	Desc string      `xml:"desc,attr"`
-	FCDA []FCDAEntry `xml:"FCDA"`
+	Name string      `scl_xml:"name,attr"`
+	Desc string      `scl_xml:"desc,attr"`
+	FCDA []FCDAEntry `scl_xml:"FCDA"`
 }
 
 type FCDAEntry struct {
-	LDInst  string `xml:"ldInst,attr,omitempty"`
-	Prefix  string `xml:"prefix,attr,omitempty"`
-	LNClass string `xml:"lnClass,attr"`
-	LNInst  string `xml:"lnInst,attr,omitempty"`
-	DOName  string `xml:"doName,attr"`
-	DAName  string `xml:"daName,attr,omitempty"`
-	FC      string `xml:"fc,attr"`
+	LDInst  string `scl_xml:"ldInst,attr,omitempty"`
+	Prefix  string `scl_xml:"prefix,attr,omitempty"`
+	LNClass string `scl_xml:"lnClass,attr"`
+	LNInst  string `scl_xml:"lnInst,attr,omitempty"`
+	DOName  string `scl_xml:"doName,attr"`
+	DAName  string `scl_xml:"daName,attr,omitempty"`
+	FC      string `scl_xml:"fc,attr"`
 }
 
 type DataTypeTemplates struct {
-	LNodeType []LNodeType `xml:"LNodeType"`
-	DOType    []DOType    `xml:"DOType"`
-	DAType    []DAType    `xml:"DAType"`
-	EnumType  []EnumType  `xml:"EnumType"`
+	LNodeType []LNodeType `scl_xml:"LNodeType"`
+	DOType    []DOType    `scl_xml:"DOType"`
+	DAType    []DAType    `scl_xml:"DAType"`
+	EnumType  []EnumType  `scl_xml:"EnumType"`
 }
 
 type LNodeType struct {
-	ID string `xml:"id,attr"`
-	DO []DO   `xml:"DO"`
+	ID string `scl_xml:"id,attr"`
+	DO []DO   `scl_xml:"DO"`
 }
 
 type DO struct {
-	Name string `xml:"name,attr"`
-	Type string `xml:"type,attr"`
-	DA   []DA   `xml:"DA"`
+	Name string `scl_xml:"name,attr"`
+	Type string `scl_xml:"type,attr"`
+	DA   []DA   `scl_xml:"DA"`
 }
 
 type DOType struct {
-	ID  string `xml:"id,attr"`
-	DA  []DA   `xml:"DA"`
-	SDO []SDO  `xml:"SDO"`
+	ID  string `scl_xml:"id,attr"`
+	DA  []DA   `scl_xml:"DA"`
+	SDO []SDO  `scl_xml:"SDO"`
 }
 
 type DA struct {
-	Name string  `xml:"name,attr"`
-	Type string  `xml:"type,attr"`
-	Val  DAValue `xml:"Val"`
-	DA   []DA    `xml:"DA"`
+	Name string  `scl_xml:"name,attr"`
+	Type string  `scl_xml:"type,attr"`
+	Val  DAValue `scl_xml:"Val"`
+	DA   []DA    `scl_xml:"DA"`
 }
 
 type DAType struct {
-	ID  string `xml:"id,attr"`
-	BDA []BDA  `xml:"BDA"`
-	DA  []DA   `xml:"DA"`
+	ID  string `scl_xml:"id,attr"`
+	BDA []BDA  `scl_xml:"BDA"`
+	DA  []DA   `scl_xml:"DA"`
 }
 
 type BDA struct {
-	Name string  `xml:"name,attr"`
-	Type string  `xml:"type,attr"`
-	Val  DAValue `xml:"Val"`
+	Name string  `scl_xml:"name,attr"`
+	Type string  `scl_xml:"type,attr"`
+	Val  DAValue `scl_xml:"Val"`
 }
 
 type EnumType struct {
-	ID      string    `xml:"id,attr"`
-	EnumVal []EnumVal `xml:"EnumVal"`
+	ID      string    `scl_xml:"id,attr"`
+	EnumVal []EnumVal `scl_xml:"EnumVal"`
 }
 
 type EnumVal struct {
-	Ord  int    `xml:"ord,attr"`
-	Name string `xml:",chardata"`
+	Ord  int    `scl_xml:"ord,attr"`
+	Name string `scl_xml:",chardata"`
 }
 
 type SDO struct {
-	Name string `xml:"name,attr"`
-	Type string `xml:"type,attr"`
-	DA   []DA   `xml:"DA"`
+	Name string `scl_xml:"name,attr"`
+	Type string `scl_xml:"type,attr"`
+	DA   []DA   `scl_xml:"DA"`
 }
 
 func (scl *SCL) Print() {

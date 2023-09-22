@@ -4,6 +4,7 @@ package iec61850
 import "C"
 import (
 	"fmt"
+	"github.com/jifanchn/go-libiec61850/iec61850/scl_xml"
 	"unsafe"
 )
 
@@ -29,7 +30,21 @@ func (client *IedClient) Connect(hostname string, tcpPort int) error {
 	return nil
 }
 
-func (client *IedClient) ReadObjectFloatValue(objectRef string, constraint FunctionalConstraint) (float64, error) {
+func (client *IedClient) ReadBoolean(objectRef string, constraint FunctionalConstraint) (bool, error) {
+	cObjectRef := C.CString(objectRef)
+	defer C.free(unsafe.Pointer(cObjectRef))
+
+	var clientError C.IedClientError
+	value := C.IedConnection_readBooleanValue(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
+
+	if clientError != C.IED_ERROR_OK {
+		return false, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+	}
+
+	return bool(value), nil
+}
+
+func (client *IedClient) ReadFloat(objectRef string, constraint FunctionalConstraint) (float64, error) {
 	cObjectRef := C.CString(objectRef)
 	defer C.free(unsafe.Pointer(cObjectRef))
 
@@ -37,10 +52,66 @@ func (client *IedClient) ReadObjectFloatValue(objectRef string, constraint Funct
 	value := C.IedConnection_readFloatValue(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
 
 	if clientError != C.IED_ERROR_OK {
-		return 0, fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+		return float64(0), fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
 	}
 
 	return float64(value), nil
+}
+
+func (client *IedClient) ReadString(objectRef string, constraint FunctionalConstraint) (string, error) {
+	cObjectRef := C.CString(objectRef)
+	defer C.free(unsafe.Pointer(cObjectRef))
+
+	var clientError C.IedClientError
+	value := C.IedConnection_readStringValue(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
+
+	if clientError != C.IED_ERROR_OK {
+		return "", fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+	}
+
+	return C.GoString(value), nil
+}
+
+func (client *IedClient) ReadInt32(objectRef string, constraint FunctionalConstraint) (int32, error) {
+	cObjectRef := C.CString(objectRef)
+	defer C.free(unsafe.Pointer(cObjectRef))
+
+	var clientError C.IedClientError
+	value := C.IedConnection_readInt32Value(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
+
+	if clientError != C.IED_ERROR_OK {
+		return int32(0), fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+	}
+
+	return int32(value), nil
+}
+
+func (client *IedClient) ReadInt64(objectRef string, constraint FunctionalConstraint) (int64, error) {
+	cObjectRef := C.CString(objectRef)
+	defer C.free(unsafe.Pointer(cObjectRef))
+
+	var clientError C.IedClientError
+	value := C.IedConnection_readInt64Value(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
+
+	if clientError != C.IED_ERROR_OK {
+		return int64(0), fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+	}
+
+	return int64(value), nil
+}
+
+func (client *IedClient) ReadUnsigned32(objectRef string, constraint FunctionalConstraint) (uint32, error) {
+	cObjectRef := C.CString(objectRef)
+	defer C.free(unsafe.Pointer(cObjectRef))
+
+	var clientError C.IedClientError
+	value := C.IedConnection_readUnsigned32Value(client.connection, &clientError, cObjectRef, C.FunctionalConstraint(constraint))
+
+	if clientError != C.IED_ERROR_OK {
+		return uint32(0), fmt.Errorf("failed to read object %s, clientError: %v", objectRef, Err(clientError))
+	}
+
+	return uint32(value), nil
 }
 
 func (client *IedClient) Close() {
@@ -122,8 +193,8 @@ func (client *IedClient) BrowseModel() {
 	}
 }
 
-func (client *IedClient) BrowseDataAttributesSCL(ref string) []DAI {
-	var dais []DAI
+func (client *IedClient) BrowseDataAttributesSCL(ref string) []scl_xml.DAI {
+	var dais []scl_xml.DAI
 	var error C.IedClientError
 
 	attributes := C.IedConnection_getDataDirectory(client.connection, &error, C.CString(ref))
@@ -138,9 +209,9 @@ func (client *IedClient) BrowseDataAttributesSCL(ref string) []DAI {
 		attributeName := C.GoString((*C.char)(attribute.data))
 		childRef := fmt.Sprintf("%s.%s", ref, attributeName)
 
-		dai := DAI{
+		dai := scl_xml.DAI{
 			Name: attributeName,
-			Val:  Val{Value: "SomeValue"}, // 这里简化了，实际上可能需要从远程设备读取属性值
+			Val:  scl_xml.Val{Value: "SomeValue"}, // 这里简化了，实际上可能需要从远程设备读取属性值
 		}
 
 		// 递归获取SDI
@@ -152,8 +223,8 @@ func (client *IedClient) BrowseDataAttributesSCL(ref string) []DAI {
 	return dais
 }
 
-func (client *IedClient) BrowseSDISCL(ref string) []SDI {
-	var sdis []SDI
+func (client *IedClient) BrowseSDISCL(ref string) []scl_xml.SDI {
+	var sdis []scl_xml.SDI
 	var error C.IedClientError
 
 	subdataObjects := C.IedConnection_getDataDirectory(client.connection, &error, C.CString(ref))
@@ -168,7 +239,7 @@ func (client *IedClient) BrowseSDISCL(ref string) []SDI {
 		sdoName := C.GoString((*C.char)(sdo.data))
 		childRef := fmt.Sprintf("%s.%s", ref, sdoName)
 
-		sdi := SDI{
+		sdi := scl_xml.SDI{
 			Name: sdoName,
 		}
 
@@ -182,8 +253,8 @@ func (client *IedClient) BrowseSDISCL(ref string) []SDI {
 	return sdis
 }
 
-func (client *IedClient) BrowseModelToSCL() (*SCL, error) {
-	scl := &SCL{}
+func (client *IedClient) BrowseModelToSCL() (*scl_xml.SCL, error) {
+	scl := &scl_xml.SCL{}
 	var error C.IedClientError
 
 	deviceList := C.IedConnection_getLogicalDeviceList(client.connection, &error)
@@ -196,7 +267,7 @@ func (client *IedClient) BrowseModelToSCL() (*SCL, error) {
 	for device := C.LinkedList_getNext(deviceList); device != nil; device = C.LinkedList_getNext(device) {
 		deviceName := C.GoString((*C.char)(device.data))
 
-		lDevice := LDevice{
+		lDevice := scl_xml.LDevice{
 			Inst: deviceName,
 		}
 
@@ -209,7 +280,7 @@ func (client *IedClient) BrowseModelToSCL() (*SCL, error) {
 		for logicalNode := C.LinkedList_getNext(logicalNodes); logicalNode != nil; logicalNode = C.LinkedList_getNext(logicalNode) {
 			logicalNodeName := C.GoString((*C.char)(logicalNode.data))
 
-			ln := LN{
+			ln := scl_xml.LN{
 				Inst: logicalNodeName,
 			}
 
@@ -219,7 +290,7 @@ func (client *IedClient) BrowseModelToSCL() (*SCL, error) {
 			for dataObject := C.LinkedList_getNext(dataObjects); dataObject != nil; dataObject = C.LinkedList_getNext(dataObject) {
 				dataObjectName := C.GoString((*C.char)(dataObject.data))
 
-				doi := DOI{
+				doi := scl_xml.DOI{
 					Name: dataObjectName,
 					DAI:  client.BrowseDataAttributesSCL(fmt.Sprintf("%s/%s.%s", deviceName, logicalNodeName, dataObjectName)),
 				}
@@ -234,12 +305,12 @@ func (client *IedClient) BrowseModelToSCL() (*SCL, error) {
 
 		C.LinkedList_destroy(logicalNodes)
 
-		ied := IED{
+		ied := scl_xml.IED{
 			Name: deviceName,
-			AccessPoint: []AccessPoint{
+			AccessPoint: []scl_xml.AccessPoint{
 				{
 					Name:    deviceName + "_AP",
-					LDevice: []LDevice{lDevice},
+					LDevice: []scl_xml.LDevice{lDevice},
 				},
 			},
 		}
