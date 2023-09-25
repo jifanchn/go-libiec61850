@@ -76,7 +76,13 @@ func TestIEC61850ClientReadValues(t *testing.T) {
 		fmt.Println(err)
 	}
 
+	dataSet, err := client.ReadDataSetValues("testSENSORS/LLN0.DATASET", "")
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	fmt.Printf("Result = %v, %v, %v\n", valueString, valInt, valFloat)
+	fmt.Printf("Dataset = %v\n", dataSet)
 	time.Sleep(time.Hour)
 	server.Stop()
 	server.Destroy()

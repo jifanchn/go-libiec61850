@@ -52,6 +52,25 @@ const (
 	IEC61850_FC_NONE FunctionalConstraint = -1
 )
 
+const (
+	MMS_ARRAY = iota
+	MMS_STRUCTURE
+	MMS_BOOLEAN
+	MMS_BIT_STRING
+	MMS_INTEGER
+	MMS_UNSIGNED
+	MMS_FLOAT
+	MMS_OCTET_STRING
+	MMS_VISIBLE_STRING
+	MMS_GENERALIZED_TIME
+	MMS_BINARY_TIME
+	MMS_BCD
+	MMS_OBJ_ID
+	MMS_STRING
+	MMS_UTC_TIME
+	MMS_DATA_ACCESS_ERROR
+)
+
 // Err get real ied error type
 func Err(e C.IedClientError) string {
 	switch e {

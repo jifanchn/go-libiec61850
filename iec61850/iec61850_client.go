@@ -8,6 +8,11 @@ import (
 	"unsafe"
 )
 
+type GoMmsValue struct {
+	Type  int         // MMS_VALUE ENUM
+	Value interface{} // The Go representation of the value
+}
+
 type IedClient struct {
 	connection C.IedConnection
 }
@@ -112,6 +117,57 @@ func (client *IedClient) ReadUnsigned32(objectRef string, constraint FunctionalC
 	}
 
 	return uint32(value), nil
+}
+
+func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier string) ([]GoMmsValue, error) {
+	var clientError C.IedClientError
+
+	cDataSetReference := C.CString(dataSetReference)
+	defer C.free(unsafe.Pointer(cDataSetReference))
+
+	clientDataSet := C.IedConnection_readDataSetValues(client.connection, &clientError, cDataSetReference, nil)
+
+	if clientError != C.IED_ERROR_OK {
+		return nil, fmt.Errorf("failed to read dataset values, error code: %d", clientError)
+	}
+
+	// 获取数据集中的值
+	values := C.ClientDataSet_getValues(clientDataSet)
+	size := int(C.ClientDataSet_getDataSetSize(clientDataSet))
+
+	goValues := make([]GoMmsValue, size)
+
+	// 遍历数据集中的值
+	// TODO: 目前暂不支持二级获取
+	for i := 0; i < size; i++ {
+		value := C.MmsValue_getElement(values, C.int(i))
+		valueType := C.MmsValue_getType(value)
+		// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
+		goValues[i].Type = int(valueType)
+
+		switch valueType {
+		case MMS_BOOLEAN:
+			realValue := bool(C.MmsValue_getBoolean(value))
+			goValues[i].Value = realValue
+		case MMS_FLOAT:
+			realValue := float64(C.MmsValue_toDouble(value))
+			goValues[i].Value = realValue
+		case MMS_INTEGER:
+			realValue := int64(C.MmsValue_toInt64(value))
+			goValues[i].Value = realValue
+		case MMS_UNSIGNED:
+			realValue := int64(C.MmsValue_toInt64(value))
+			goValues[i].Value = realValue
+		case MMS_STRING:
+			realValue := C.GoString(C.MmsValue_toString(value))
+			goValues[i].Value = realValue
+		case MMS_VISIBLE_STRING:
+			realValue := C.GoString(C.MmsValue_toString(value))
+			goValues[i].Value = realValue
+		}
+	}
+
+	return goValues, nil
 }
 
 func (client *IedClient) Close() {
