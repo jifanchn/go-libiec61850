@@ -71,6 +71,10 @@ const (
 	MMS_DATA_ACCESS_ERROR
 )
 
+const (
+	MMS_NIL = -1
+)
+
 // Err get real ied error type
 func Err(e C.IedClientError) string {
 	switch e {

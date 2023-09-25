@@ -119,39 +119,38 @@ func (client *IedClient) ReadUnsigned32(objectRef string, constraint FunctionalC
 	return uint32(value), nil
 }
 
-func (client *IedClient) resolveValue(value *C.MmsValue, valueType int) *GoMmsValue {
-	goValue := &GoMmsValue{}
+func (client *IedClient) resolveValue(value *C.MmsValue, valueType int) interface{} {
+	goValue := interface{}(nil)
 
 	// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
-	goValue.Type = valueType
 
 	switch valueType {
 	case MMS_BOOLEAN:
 		realValue := bool(C.MmsValue_getBoolean(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_FLOAT:
 		realValue := float64(C.MmsValue_toDouble(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_INTEGER:
 		realValue := int64(C.MmsValue_toInt64(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_UNSIGNED:
 		realValue := int64(C.MmsValue_toInt64(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_STRING:
 		realValue := C.GoString(C.MmsValue_toString(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_VISIBLE_STRING:
 		realValue := C.GoString(C.MmsValue_toString(value))
-		goValue.Value = realValue
+		goValue = realValue
 	case MMS_STRUCTURE:
-		goValue.Value = client.digIntoStructure(value)
+		goValue = client.digIntoStructure(value)
 	case MMS_ARRAY:
-		goValue.Value = client.digIntoStructure(value)
+		goValue = client.digIntoStructure(value)
 	case MMS_BIT_STRING:
-		goValue.Value = uint32(C.MmsValue_getBitStringAsInteger(value))
+		goValue = uint32(C.MmsValue_getBitStringAsInteger(value))
 	case MMS_UTC_TIME:
-		goValue.Value = uint32(C.MmsValue_toUnixTimestamp(value))
+		goValue = uint32(C.MmsValue_toUnixTimestamp(value))
 	}
 
 	return goValue
@@ -200,34 +199,11 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 	// TODO: 目前暂不支持二级获取
 	for i := 0; i < size; i++ {
 		value := C.MmsValue_getElement(values, C.int(i))
-		valueType := C.MmsValue_getType(value)
+		valueType := int(C.MmsValue_getType(value))
 		// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
-		goValues[i].Type = int(valueType)
+		goValues[i].Type = valueType
 
-		switch valueType {
-		case MMS_BOOLEAN:
-			realValue := bool(C.MmsValue_getBoolean(value))
-			goValues[i].Value = realValue
-		case MMS_FLOAT:
-			realValue := float64(C.MmsValue_toDouble(value))
-			goValues[i].Value = realValue
-		case MMS_INTEGER:
-			realValue := int64(C.MmsValue_toInt64(value))
-			goValues[i].Value = realValue
-		case MMS_UNSIGNED:
-			realValue := int64(C.MmsValue_toInt64(value))
-			goValues[i].Value = realValue
-		case MMS_STRING:
-			realValue := C.GoString(C.MmsValue_toString(value))
-			goValues[i].Value = realValue
-		case MMS_VISIBLE_STRING:
-			realValue := C.GoString(C.MmsValue_toString(value))
-			goValues[i].Value = realValue
-		case MMS_STRUCTURE:
-			goValues[i].Value = client.digIntoStructure(value)
-		default:
-			continue
-		}
+		goValues[i].Value = client.resolveValue(value, valueType)
 	}
 
 	return goValues, nil
