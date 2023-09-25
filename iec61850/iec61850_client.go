@@ -119,6 +119,65 @@ func (client *IedClient) ReadUnsigned32(objectRef string, constraint FunctionalC
 	return uint32(value), nil
 }
 
+func (client *IedClient) resolveValue(value *C.MmsValue, valueType int) *GoMmsValue {
+	goValue := &GoMmsValue{}
+
+	// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
+	goValue.Type = valueType
+
+	switch valueType {
+	case MMS_BOOLEAN:
+		realValue := bool(C.MmsValue_getBoolean(value))
+		goValue.Value = realValue
+	case MMS_FLOAT:
+		realValue := float64(C.MmsValue_toDouble(value))
+		goValue.Value = realValue
+	case MMS_INTEGER:
+		realValue := int64(C.MmsValue_toInt64(value))
+		goValue.Value = realValue
+	case MMS_UNSIGNED:
+		realValue := int64(C.MmsValue_toInt64(value))
+		goValue.Value = realValue
+	case MMS_STRING:
+		realValue := C.GoString(C.MmsValue_toString(value))
+		goValue.Value = realValue
+	case MMS_VISIBLE_STRING:
+		realValue := C.GoString(C.MmsValue_toString(value))
+		goValue.Value = realValue
+	case MMS_STRUCTURE:
+		goValue.Value = client.digIntoStructure(value)
+	case MMS_ARRAY:
+		goValue.Value = client.digIntoStructure(value)
+	case MMS_BIT_STRING:
+		goValue.Value = uint32(C.MmsValue_getBitStringAsInteger(value))
+	case MMS_UTC_TIME:
+		goValue.Value = uint32(C.MmsValue_toUnixTimestamp(value))
+	}
+
+	return goValue
+}
+
+func (client *IedClient) digIntoStructure(mms *C.MmsValue) []GoMmsValue {
+	mmsType := C.MmsValue_getType(mms)
+	if mmsType != MMS_STRUCTURE {
+		return nil
+	}
+	goValues := make([]GoMmsValue, 0)
+	index := 0
+	for {
+		value := C.MmsValue_getElement(mms, C.int(index))
+		if value == nil {
+			return goValues
+		}
+		valueType := C.MmsValue_getType(value)
+		var goValue GoMmsValue
+		goValue.Value = client.resolveValue(value, int(valueType))
+		goValue.Type = (int)(valueType)
+		goValues = append(goValues, goValue)
+		index += 1
+	}
+}
+
 func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier string) ([]GoMmsValue, error) {
 	var clientError C.IedClientError
 
@@ -164,6 +223,10 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 		case MMS_VISIBLE_STRING:
 			realValue := C.GoString(C.MmsValue_toString(value))
 			goValues[i].Value = realValue
+		case MMS_STRUCTURE:
+			goValues[i].Value = client.digIntoStructure(value)
+		default:
+			continue
 		}
 	}
 
