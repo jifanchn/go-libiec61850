@@ -6,6 +6,7 @@ import "C"
 import "C"
 
 type FunctionalConstraint int
+type MMSType int
 
 const (
 	// IEC61850_FC_ST Status information
@@ -53,7 +54,7 @@ const (
 )
 
 const (
-	MMS_ARRAY = iota
+	MMS_ARRAY MMSType = iota
 	MMS_STRUCTURE
 	MMS_BOOLEAN
 	MMS_BIT_STRING

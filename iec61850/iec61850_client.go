@@ -9,7 +9,7 @@ import (
 )
 
 type GoMmsValue struct {
-	Type  int         // MMS_VALUE ENUM
+	Type  MMSType     // MMS_VALUE ENUM
 	Value interface{} // The Go representation of the value
 }
 
@@ -30,7 +30,7 @@ func (client *IedClient) Connect(hostname string, tcpPort int) error {
 	var clientError C.IedClientError
 	C.IedConnection_connect(client.connection, &clientError, cHostname, C.int(tcpPort))
 	if clientError != C.IED_ERROR_OK {
-		return fmt.Errorf("failed to connect to %s:%d, clientError: %v", hostname, tcpPort, clientError)
+		return fmt.Errorf("failed to connect to %s:%d, clientError: %v", hostname, tcpPort, Err(clientError))
 	}
 	return nil
 }
@@ -119,7 +119,7 @@ func (client *IedClient) ReadUnsigned32(objectRef string, constraint FunctionalC
 	return uint32(value), nil
 }
 
-func (client *IedClient) resolveValue(value *C.MmsValue, valueType int) interface{} {
+func (client *IedClient) resolveValue(value *C.MmsValue, valueType MMSType) interface{} {
 	goValue := interface{}(nil)
 
 	// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
@@ -158,7 +158,7 @@ func (client *IedClient) resolveValue(value *C.MmsValue, valueType int) interfac
 
 func (client *IedClient) digIntoStructure(mms *C.MmsValue) []GoMmsValue {
 	mmsType := C.MmsValue_getType(mms)
-	if mmsType != MMS_STRUCTURE {
+	if MMSType(mmsType) != MMS_STRUCTURE {
 		return nil
 	}
 	goValues := make([]GoMmsValue, 0)
@@ -170,10 +170,10 @@ func (client *IedClient) digIntoStructure(mms *C.MmsValue) []GoMmsValue {
 		}
 		valueType := C.MmsValue_getType(value)
 		var goValue GoMmsValue
-		goValue.Value = client.resolveValue(value, int(valueType))
-		goValue.Type = (int)(valueType)
+		goValue.Value = client.resolveValue(value, MMSType(valueType))
+		goValue.Type = (MMSType)(valueType)
 		goValues = append(goValues, goValue)
-		index += 1
+		index++
 	}
 }
 
@@ -186,8 +186,10 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 	clientDataSet := C.IedConnection_readDataSetValues(client.connection, &clientError, cDataSetReference, nil)
 
 	if clientError != C.IED_ERROR_OK {
-		return nil, fmt.Errorf("failed to read dataset values, error code: %d", clientError)
+		return nil, fmt.Errorf("failed to read dataset values, error code: %s", Err(clientError))
 	}
+
+	defer C.ClientDataSet_destroy(clientDataSet)
 
 	// 获取数据集中的值
 	values := C.ClientDataSet_getValues(clientDataSet)
@@ -196,10 +198,9 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 	goValues := make([]GoMmsValue, size)
 
 	// 遍历数据集中的值
-	// TODO: 目前暂不支持二级获取
 	for i := 0; i < size; i++ {
 		value := C.MmsValue_getElement(values, C.int(i))
-		valueType := int(C.MmsValue_getType(value))
+		valueType := MMSType(C.MmsValue_getType(value))
 		// Refer to https://support.mz-automation.de/doc/libiec61850/c/latest/group__MMS__VALUE.html
 		goValues[i].Type = valueType
 
@@ -221,17 +222,17 @@ func printSpaces(count int) {
 }
 
 func (client *IedClient) BrowseDataAttributes(doRef string, spaces int) {
-	var error C.IedClientError
+	var clientError C.IedClientError
 
-	dataAttributes := C.IedConnection_getDataDirectory(client.connection, &error, C.CString(doRef))
+	dataAttributes := C.IedConnection_getDataDirectory(client.connection, &clientError, C.CString(doRef))
 	if dataAttributes != nil {
 		for dataAttribute := C.LinkedList_getNext(dataAttributes); dataAttribute != nil; dataAttribute = C.LinkedList_getNext(dataAttribute) {
 			dataAttributeName := C.GoString((*C.char)(dataAttribute.data))
 
 			printSpaces(spaces) // Assuming you've a function that prints spaces
-			fmt.Printf("DA: %s\n", dataAttributeName)
+			fmt.Printf("DA: %s\n", string(dataAttributeName))
 
-			daRef := fmt.Sprintf("%s.%s", doRef, dataAttributeName)
+			daRef := fmt.Sprintf("%s.%s", doRef, string(dataAttributeName))
 			client.BrowseDataAttributes(daRef, spaces+2)
 		}
 	}
@@ -240,25 +241,25 @@ func (client *IedClient) BrowseDataAttributes(doRef string, spaces int) {
 }
 
 func (client *IedClient) BrowseModel() {
-	var error C.IedClientError
+	var clientError C.IedClientError
 
 	// Get Logical Device List
-	deviceList := C.IedConnection_getLogicalDeviceList(client.connection, &error)
+	deviceList := C.IedConnection_getLogicalDeviceList(client.connection, &clientError)
 	defer C.LinkedList_destroy(deviceList)
 
-	if error != 0 {
-		fmt.Printf("Failed to retrieve logical device list. Error: %d\n", error)
+	if clientError != 0 {
+		fmt.Printf("Failed to retrieve logical device list. Error: %s\n", Err(clientError))
 		return
 	}
 
 	for device := C.LinkedList_getNext(deviceList); device != nil; device = C.LinkedList_getNext(device) {
 		deviceName := C.GoString((*C.char)(device.data))
-		fmt.Printf("LD: %s\n", deviceName)
+		fmt.Printf("LD: %s\n", string(deviceName))
 
 		// Get Logical Node Directory
-		logicalNodes := C.IedConnection_getLogicalDeviceDirectory(client.connection, &error, C.CString(deviceName))
-		if error != 0 {
-			fmt.Printf("Failed to retrieve logical nodes for device %v. Error: %v\n", deviceName, error)
+		logicalNodes := C.IedConnection_getLogicalDeviceDirectory(client.connection, &clientError, C.CString(deviceName))
+		if clientError != 0 {
+			fmt.Printf("Failed to retrieve logical nodes for device %v. Error: %s\n", deviceName, Err(clientError))
 			continue
 		}
 
@@ -266,15 +267,15 @@ func (client *IedClient) BrowseModel() {
 			logicalNodeName := C.GoString((*C.char)(logicalNode.data))
 			fmt.Printf("  LN: %v\n", logicalNodeName)
 
-			lnRef := fmt.Sprintf("%s/%s", deviceName, logicalNodeName)
+			lnRef := fmt.Sprintf("%s/%s", string(deviceName), string(logicalNodeName))
 
 			// Browse DataObjects
-			dataObjects := C.IedConnection_getLogicalNodeDirectory(client.connection, &error, C.CString(lnRef), C.ACSI_CLASS_DATA_OBJECT)
+			dataObjects := C.IedConnection_getLogicalNodeDirectory(client.connection, &clientError, C.CString(lnRef), C.ACSI_CLASS_DATA_OBJECT)
 			for dataObject := C.LinkedList_getNext(dataObjects); dataObject != nil; dataObject = C.LinkedList_getNext(dataObject) {
 				dataObjectName := C.GoString((*C.char)(dataObject.data))
-				fmt.Printf("    DO: %s\n", dataObjectName)
+				fmt.Printf("    DO: %s\n", string(dataObjectName))
 
-				doRef := fmt.Sprintf("%s/%s.%s", deviceName, logicalNodeName, dataObjectName)
+				doRef := fmt.Sprintf("%s/%s.%s", string(deviceName), string(logicalNodeName), string(dataObjectName))
 
 				client.BrowseDataAttributes(doRef, 6)
 			}
@@ -290,19 +291,19 @@ func (client *IedClient) BrowseModel() {
 
 func (client *IedClient) BrowseDataAttributesSCL(ref string) []scl_xml.DAI {
 	var dais []scl_xml.DAI
-	var error C.IedClientError
+	var clientError C.IedClientError
 
-	attributes := C.IedConnection_getDataDirectory(client.connection, &error, C.CString(ref))
+	attributes := C.IedConnection_getDataDirectory(client.connection, &clientError, C.CString(ref))
 	defer C.LinkedList_destroy(attributes)
 
-	if error != 0 {
-		fmt.Printf("Failed to retrieve DAs for reference %s. Error: %v\n", ref, error)
+	if clientError != 0 {
+		fmt.Printf("Failed to retrieve DAs for reference %s. Error: %s\n", ref, Err(clientError))
 		return dais
 	}
 
 	for attribute := C.LinkedList_getNext(attributes); attribute != nil; attribute = C.LinkedList_getNext(attribute) {
 		attributeName := C.GoString((*C.char)(attribute.data))
-		childRef := fmt.Sprintf("%s.%s", ref, attributeName)
+		childRef := fmt.Sprintf("%s.%s", ref, string(attributeName))
 
 		dai := scl_xml.DAI{
 			Name: attributeName,
@@ -320,19 +321,19 @@ func (client *IedClient) BrowseDataAttributesSCL(ref string) []scl_xml.DAI {
 
 func (client *IedClient) BrowseSDISCL(ref string) []scl_xml.SDI {
 	var sdis []scl_xml.SDI
-	var error C.IedClientError
+	var clientError C.IedClientError
 
-	subdataObjects := C.IedConnection_getDataDirectory(client.connection, &error, C.CString(ref))
+	subdataObjects := C.IedConnection_getDataDirectory(client.connection, &clientError, C.CString(ref))
 	defer C.LinkedList_destroy(subdataObjects)
 
-	if error != 0 {
-		fmt.Printf("Failed to retrieve SDIs for reference %s. Error: %v\n", ref, error)
+	if clientError != 0 {
+		fmt.Printf("Failed to retrieve SDIs for reference %s. Error: %s\n", ref, Err(clientError))
 		return sdis
 	}
 
 	for sdo := C.LinkedList_getNext(subdataObjects); sdo != nil; sdo = C.LinkedList_getNext(sdo) {
 		sdoName := C.GoString((*C.char)(sdo.data))
-		childRef := fmt.Sprintf("%s.%s", ref, sdoName)
+		childRef := fmt.Sprintf("%s.%s", ref, string(sdoName))
 
 		sdi := scl_xml.SDI{
 			Name: sdoName,
@@ -350,13 +351,13 @@ func (client *IedClient) BrowseSDISCL(ref string) []scl_xml.SDI {
 
 func (client *IedClient) BrowseModelToSCL() (*scl_xml.SCL, error) {
 	scl := &scl_xml.SCL{}
-	var error C.IedClientError
+	var clientError C.IedClientError
 
-	deviceList := C.IedConnection_getLogicalDeviceList(client.connection, &error)
+	deviceList := C.IedConnection_getLogicalDeviceList(client.connection, &clientError)
 	defer C.LinkedList_destroy(deviceList)
 
-	if error != 0 {
-		return nil, fmt.Errorf("failed to retrieve logical device list. Error: %v", error)
+	if clientError != 0 {
+		return nil, fmt.Errorf("failed to retrieve logical device list. Error: %s", Err(clientError))
 	}
 
 	for device := C.LinkedList_getNext(deviceList); device != nil; device = C.LinkedList_getNext(device) {
@@ -366,9 +367,9 @@ func (client *IedClient) BrowseModelToSCL() (*scl_xml.SCL, error) {
 			Inst: deviceName,
 		}
 
-		logicalNodes := C.IedConnection_getLogicalDeviceDirectory(client.connection, &error, C.CString(deviceName))
-		if error != 0 {
-			fmt.Printf("Failed to retrieve logical nodes for device %v. Error: %v\n", deviceName, error)
+		logicalNodes := C.IedConnection_getLogicalDeviceDirectory(client.connection, &clientError, C.CString(deviceName))
+		if clientError != 0 {
+			fmt.Printf("Failed to retrieve logical nodes for device %v. Error: %s\n", deviceName, Err(clientError))
 			continue
 		}
 
@@ -379,15 +380,15 @@ func (client *IedClient) BrowseModelToSCL() (*scl_xml.SCL, error) {
 				Inst: logicalNodeName,
 			}
 
-			lnRef := fmt.Sprintf("%s/%s", deviceName, logicalNodeName)
+			lnRef := fmt.Sprintf("%s/%s", string(deviceName), string(logicalNodeName))
 
-			dataObjects := C.IedConnection_getLogicalNodeDirectory(client.connection, &error, C.CString(lnRef), C.ACSI_CLASS_DATA_OBJECT)
+			dataObjects := C.IedConnection_getLogicalNodeDirectory(client.connection, &clientError, C.CString(lnRef), C.ACSI_CLASS_DATA_OBJECT)
 			for dataObject := C.LinkedList_getNext(dataObjects); dataObject != nil; dataObject = C.LinkedList_getNext(dataObject) {
 				dataObjectName := C.GoString((*C.char)(dataObject.data))
 
 				doi := scl_xml.DOI{
 					Name: dataObjectName,
-					DAI:  client.BrowseDataAttributesSCL(fmt.Sprintf("%s/%s.%s", deviceName, logicalNodeName, dataObjectName)),
+					DAI:  client.BrowseDataAttributesSCL(fmt.Sprintf("%s/%s.%s", string(deviceName), string(logicalNodeName), string(dataObjectName))),
 				}
 
 				ln.DOI = append(ln.DOI, doi)
