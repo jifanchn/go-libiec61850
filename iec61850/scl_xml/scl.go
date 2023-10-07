@@ -2,7 +2,6 @@ package scl_xml
 
 import (
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -24,141 +23,216 @@ type FLOAT32 float32
 type VisString255 string
 type Unicode255 string
 
+type DataSetDetail struct {
+	DataSet
+	DOTypes           map[string]DOType
+	DataTypeTemplates *DataTypeTemplates
+}
+
+func (ds *DataSetDetail) GetDOType(prefix, lnClass, name string) DOType {
+	var doTypeId string
+
+	key := fmt.Sprintf("%s%s/%s", prefix, lnClass, name)
+
+	if ds.DOTypes != nil {
+		if typ, ok := ds.DOTypes[key]; ok {
+			return typ
+		}
+	}
+
+	for _, lNodeType := range ds.DataTypeTemplates.LNodeType {
+		if lNodeType.ID == fmt.Sprintf("%s%s", prefix, lnClass) {
+			for _, do := range lNodeType.DO {
+				if do.Name == name {
+					doTypeId = do.Type
+					break
+				}
+			}
+			break
+		}
+	}
+
+	for _, doType := range ds.DataTypeTemplates.DOType {
+		if doType.ID == doTypeId {
+			if ds.DOTypes == nil {
+				ds.DOTypes = make(map[string]DOType)
+			}
+
+			ds.DOTypes[key] = doType
+			return doType
+		}
+	}
+
+	return DOType{}
+}
+
 type SCL struct {
-	IED               []IED             `scl_xml:"IED"`
-	DataTypeTemplates DataTypeTemplates `scl_xml:"DataTypeTemplates"`
+	IED               []IED             `xml:"IED"`
+	DataTypeTemplates DataTypeTemplates `xml:"DataTypeTemplates"`
+}
+
+func (scl *SCL) GetDataSet(ref string) (*DataSetDetail, error) {
+	args := strings.Split(ref, "/")
+	if len(args) != 2 {
+		return nil, fmt.Errorf("error parse dataset ref: %s", ref)
+	}
+
+	for _, ied := range scl.IED {
+		for _, accessPoint := range ied.AccessPoint {
+			for _, lDevice := range accessPoint.LDevice {
+				if fmt.Sprintf("%s%s", ied.Name, lDevice.Inst) == args[0] {
+					for _, dSet := range lDevice.LN0.DataSets {
+						if fmt.Sprintf("%s.%s", lDevice.LN0.LnClass, dSet.Name) == args[1] {
+							return &DataSetDetail{
+								DataSet:           dSet,
+								DataTypeTemplates: &scl.DataTypeTemplates,
+							}, nil
+						}
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("can not found dataset ref: %s", ref)
 }
 
 type IED struct {
-	Name          string        `scl_xml:"name,attr"`
-	Type          string        `scl_xml:"type,attr"`
-	Desc          string        `scl_xml:"desc,attr"`
-	ConfigVersion string        `scl_xml:"configVersion,attr"`
-	AccessPoint   []AccessPoint `scl_xml:"AccessPoint"`
+	Name          string        `xml:"name,attr"`
+	Type          string        `xml:"type,attr"`
+	Desc          string        `xml:"desc,attr"`
+	ConfigVersion string        `xml:"configVersion,attr"`
+	AccessPoint   []AccessPoint `xml:"AccessPoint"`
 }
 
 type AccessPoint struct {
-	Name    string    `scl_xml:"name,attr"`
-	LDevice []LDevice `scl_xml:"Server>LDevice"`
+	Name    string    `xml:"name,attr"`
+	LDevice []LDevice `xml:"Server>LDevice"`
 }
 
 type LDevice struct {
-	Inst string `scl_xml:"inst,attr"`
-	LN   []LN   `scl_xml:"LN"`
-	LN0  LN0    `scl_xml:"LN0"`
+	Inst string `xml:"inst,attr"`
+	LN   []LN   `xml:"LN"`
+	LN0  LN0    `xml:"LN0"`
 }
 
 type LN0 struct {
-	Inst     string    `scl_xml:"inst,attr"`
-	LnType   string    `scl_xml:"lnType,attr"`
-	LnClass  string    `scl_xml:"lnClass,attr"`
-	DataSets []DataSet `scl_xml:"DataSet"`
+	Inst     string    `xml:"inst,attr"`
+	LnType   string    `xml:"lnType,attr"`
+	LnClass  string    `xml:"lnClass,attr"`
+	DataSets []DataSet `xml:"DataSet"`
 }
 
 type LN struct {
-	Inst    string `scl_xml:"inst,attr"`
-	Prefix  string `scl_xml:"prefix,attr"`
-	LnType  string `scl_xml:"lnType,attr"`
-	LnClass string `scl_xml:"lnClass,attr"`
-	DOI     []DOI  `scl_xml:"DOI"`
+	Inst    string `xml:"inst,attr"`
+	Prefix  string `xml:"prefix,attr"`
+	LnType  string `xml:"lnType,attr"`
+	LnClass string `xml:"lnClass,attr"`
+	DOI     []DOI  `xml:"DOI"`
 }
 
 type DOI struct {
-	Desc string `scl_xml:"desc,attr"`
-	Name string `scl_xml:"name,attr"`
-	DAI  []DAI  `scl_xml:"DAI"`
-	SDI  []SDI  `scl_xml:"SDI"`
+	Desc string `xml:"desc,attr"`
+	Name string `xml:"name,attr"`
+	DAI  []DAI  `xml:"DAI"`
+	SDI  []SDI  `xml:"SDI"`
 }
 
 type DAI struct {
-	Name string `scl_xml:"name,attr"`
-	Val  Val    `scl_xml:"Val"`
-	SDI  []SDI  `scl_xml:"SDI"` // 新增
+	Name string `xml:"name,attr"`
+	Val  Val    `xml:"Val"`
+	SDI  []SDI  `xml:"SDI"` // 新增
 }
 
 type SDI struct {
-	Name string `scl_xml:"name,attr"`
-	DAI  []DAI  `scl_xml:"DAI"`
-	SDI  []SDI  `scl_xml:"SDI"` // 递归地包含SDI
+	Name string `xml:"name,attr"`
+	DAI  []DAI  `xml:"DAI"`
+	SDI  []SDI  `xml:"SDI"` // 递归地包含SDI
 }
 
 type Val struct {
-	Value string `scl_xml:",chardata"`
+	Value string `xml:",chardata"`
 }
 
 type DataSet struct {
-	Name string      `scl_xml:"name,attr"`
-	Desc string      `scl_xml:"desc,attr"`
-	FCDA []FCDAEntry `scl_xml:"FCDA"`
+	Name string      `xml:"name,attr"`
+	Desc string      `xml:"desc,attr"`
+	FCDA []FCDAEntry `xml:"FCDA"`
 }
 
 type FCDAEntry struct {
-	LDInst  string `scl_xml:"ldInst,attr,omitempty"`
-	Prefix  string `scl_xml:"prefix,attr,omitempty"`
-	LNClass string `scl_xml:"lnClass,attr"`
-	LNInst  string `scl_xml:"lnInst,attr,omitempty"`
-	DOName  string `scl_xml:"doName,attr"`
-	DAName  string `scl_xml:"daName,attr,omitempty"`
-	FC      string `scl_xml:"fc,attr"`
+	LDInst  string `xml:"ldInst,attr,omitempty"`
+	Prefix  string `xml:"prefix,attr,omitempty"`
+	LNClass string `xml:"lnClass,attr"`
+	LNInst  string `xml:"lnInst,attr,omitempty"`
+	DOName  string `xml:"doName,attr"`
+	DAName  string `xml:"daName,attr,omitempty"`
+	FC      string `xml:"fc,attr"`
 }
 
 type DataTypeTemplates struct {
-	LNodeType []LNodeType `scl_xml:"LNodeType"`
-	DOType    []DOType    `scl_xml:"DOType"`
-	DAType    []DAType    `scl_xml:"DAType"`
-	EnumType  []EnumType  `scl_xml:"EnumType"`
+	LNodeType []LNodeType `xml:"LNodeType"`
+	DOType    []DOType    `xml:"DOType"`
+	DAType    []DAType    `xml:"DAType"`
+	EnumType  []EnumType  `xml:"EnumType"`
 }
 
 type LNodeType struct {
-	ID string `scl_xml:"id,attr"`
-	DO []DO   `scl_xml:"DO"`
+	ID      string `xml:"id,attr"`
+	LNClass string `xml:"lnClass,attr"`
+	Desc    string `xml:"desc,attr,omitempty"`
+	DO      []DO   `xml:"DO"`
 }
 
 type DO struct {
-	Name string `scl_xml:"name,attr"`
-	Type string `scl_xml:"type,attr"`
-	DA   []DA   `scl_xml:"DA"`
+	Name string `xml:"name,attr"`
+	Type string `xml:"type,attr"`
+	Desc string `xml:"desc,attr,omitempty"`
+	DA   []DA   `xml:"DA"`
 }
 
 type DOType struct {
-	ID  string `scl_xml:"id,attr"`
-	DA  []DA   `scl_xml:"DA"`
-	SDO []SDO  `scl_xml:"SDO"`
+	ID   string `xml:"id,attr"`
+	DA   []DA   `xml:"DA"`
+	Desc string `xml:"desc,attr,omitempty"`
+	SDO  []SDO  `xml:"SDO"`
 }
 
 type DA struct {
-	Name string  `scl_xml:"name,attr"`
-	Type string  `scl_xml:"type,attr"`
-	Val  DAValue `scl_xml:"Val"`
-	DA   []DA    `scl_xml:"DA"`
+	Name string  `xml:"name,attr"`
+	Type string  `xml:"bType,attr"`
+	FC   string  `xml:"fc,attr"`
+	Val  DAValue `xml:"Val"`
+	DA   []DA    `xml:"DA"`
 }
 
 type DAType struct {
-	ID  string `scl_xml:"id,attr"`
-	BDA []BDA  `scl_xml:"BDA"`
-	DA  []DA   `scl_xml:"DA"`
+	ID  string `xml:"id,attr"`
+	BDA []BDA  `xml:"BDA"`
+	DA  []DA   `xml:"DA"`
 }
 
 type BDA struct {
-	Name string  `scl_xml:"name,attr"`
-	Type string  `scl_xml:"type,attr"`
-	Val  DAValue `scl_xml:"Val"`
+	Name string  `xml:"name,attr"`
+	Type string  `xml:"type,attr"`
+	Val  DAValue `xml:"Val"`
 }
 
 type EnumType struct {
-	ID      string    `scl_xml:"id,attr"`
-	EnumVal []EnumVal `scl_xml:"EnumVal"`
+	ID      string    `xml:"id,attr"`
+	EnumVal []EnumVal `xml:"EnumVal"`
 }
 
 type EnumVal struct {
-	Ord  int    `scl_xml:"ord,attr"`
-	Name string `scl_xml:",chardata"`
+	Ord  int    `xml:"ord,attr"`
+	Name string `xml:",chardata"`
 }
 
 type SDO struct {
-	Name string `scl_xml:"name,attr"`
-	Type string `scl_xml:"type,attr"`
-	DA   []DA   `scl_xml:"DA"`
+	Name string `xml:"name,attr"`
+	Type string `xml:"type,attr"`
+	DA   []DA   `xml:"DA"`
 }
 
 func (scl *SCL) Print() {
@@ -277,21 +351,23 @@ func getIndentation(depth int) string {
 }
 
 func GetSCL(path string) (SCL, error) {
+	var scl SCL
 	// 打开并读取ICD文件
 	xmlFile, err := os.Open(path)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
-		return SCL{}, errors.New("open file failed")
+		return scl, fmt.Errorf("open file failed: %v", err)
 	}
 	defer xmlFile.Close()
 
-	byteValue, _ := ioutil.ReadAll(xmlFile)
+	byteValue, err := ioutil.ReadAll(xmlFile)
+	if err != nil {
+		return scl, err
+	}
 
-	var scl SCL
 	err = xml.Unmarshal(byteValue, &scl)
 	if err != nil {
-		fmt.Println("Error unmarshalling XML:", err)
-		return SCL{}, errors.New("unmarshall failed")
+		return scl, fmt.Errorf("unmarshall failed: %v", err)
 	}
 
 	return scl, nil

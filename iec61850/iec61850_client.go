@@ -3,6 +3,7 @@ package iec61850
 // #include <iec61850_client.h>
 import "C"
 import (
+	"errors"
 	"fmt"
 	"github.com/jifanchn/go-libiec61850/iec61850/scl_xml"
 	"unsafe"
@@ -208,6 +209,37 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 	}
 
 	return goValues, nil
+}
+
+func (client *IedClient) ExplainDataSetValues(values []GoMmsValue, dSetScl *scl_xml.DataSetDetail) (map[string]interface{}, error) {
+	if len(dSetScl.FCDA) != len(values) {
+		return nil, errors.New("error dataset scl")
+	}
+
+	ret := make(map[string]interface{})
+	for idx, entity := range dSetScl.FCDA {
+		ref := fmt.Sprintf("%s/%s%s%s.%s", entity.LDInst, entity.Prefix, entity.LNClass, entity.LNInst, entity.DOName)
+		val := values[idx]
+		if entity.DAName != "" {
+			ref += fmt.Sprintf(".%s", entity.DAName)
+			ret[ref] = val.Value
+		} else {
+			if valueList, ok := val.Value.([]GoMmsValue); ok {
+				doTyp := dSetScl.GetDOType(entity.Prefix, entity.LNClass, entity.DOName)
+				for i, v := range valueList {
+					var refNew string
+					if len(doTyp.DA) > i+1 {
+						refNew = fmt.Sprintf("%s.%s", ref, doTyp.DA[i].Name)
+					} else {
+						refNew = fmt.Sprintf("%s.%d", ref, i)
+					}
+					ret[refNew] = v.Value
+				}
+			}
+		}
+	}
+
+	return ret, nil
 }
 
 func (client *IedClient) Close() {
