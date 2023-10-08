@@ -6,7 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jifanchn/go-libiec61850/iec61850/scl_xml"
+	"time"
 	"unsafe"
+)
+
+type ClientState int
+
+const (
+	IED_STATE_CLOSED ClientState = iota
+	IED_STATE_CONNECTING
+	IED_STATE_CONNECTED
+	IED_STATE_CLOSING
 )
 
 type GoMmsValue struct {
@@ -14,13 +24,38 @@ type GoMmsValue struct {
 	Value interface{} // The Go representation of the value
 }
 
+type Option func(client *IedClient)
+
 type IedClient struct {
 	connection C.IedConnection
 }
 
-func NewIedClient() *IedClient {
-	return &IedClient{
+func NewIedClient(options ...Option) *IedClient {
+	client := &IedClient{
 		connection: C.IedConnection_create(),
+	}
+
+	for _, op := range options {
+		if op != nil {
+			op(client)
+		}
+	}
+
+	return client
+}
+
+func ConnectTimeout(timeout time.Duration) func(*IedClient) {
+	// #define CONFIG_MMS_CONNECTION_DEFAULT_CONNECT_TIMEOUT 10000
+	return func(c *IedClient) {
+		// replace to c time
+		C.IedConnection_setConnectTimeout(c.connection, C.uint(timeout/1e6))
+	}
+}
+
+func RequestTimeout(timeout time.Duration) func(*IedClient) {
+	// #define CONFIG_MMS_CONNECTION_DEFAULT_TIMEOUT 5000
+	return func(c *IedClient) {
+		C.IedConnection_setRequestTimeout(c.connection, C.uint(timeout/1e6))
 	}
 }
 
@@ -30,10 +65,17 @@ func (client *IedClient) Connect(hostname string, tcpPort int) error {
 
 	var clientError C.IedClientError
 	C.IedConnection_connect(client.connection, &clientError, cHostname, C.int(tcpPort))
-	if clientError != C.IED_ERROR_OK {
+	if clientError == C.IED_ERROR_ALREADY_CONNECTED {
+		return nil
+	} else if clientError != C.IED_ERROR_OK {
 		return fmt.Errorf("failed to connect to %s:%d, clientError: %v", hostname, tcpPort, Err(clientError))
 	}
 	return nil
+}
+
+func (client *IedClient) State() ClientState {
+	state := C.IedConnection_getState(client.connection)
+	return ClientState(state)
 }
 
 func (client *IedClient) ReadBoolean(objectRef string, constraint FunctionalConstraint) (bool, error) {
