@@ -260,7 +260,7 @@ func (client *IedClient) ExplainDataSetValues(values []GoMmsValue, dSetScl *scl_
 
 	ret := make(map[string]interface{})
 	for idx, entity := range dSetScl.FCDA {
-		ref := fmt.Sprintf("%s/%s%s%s.%s", entity.LDInst, entity.Prefix, entity.LNClass, entity.LNInst, entity.DOName)
+		ref := fmt.Sprintf("%s%s/%s%s%s.%s", dSetScl.IEDName, entity.LDInst, entity.Prefix, entity.LNClass, entity.LNInst, entity.DOName)
 		val := values[idx]
 		if entity.DAName != "" {
 			ref += fmt.Sprintf(".%s", entity.DAName)

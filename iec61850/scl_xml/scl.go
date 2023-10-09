@@ -25,6 +25,7 @@ type Unicode255 string
 
 type DataSetDetail struct {
 	DataSet
+	IEDName           string
 	DOTypes           map[string]DOType
 	DataTypeTemplates DataTypeTemplates
 }
@@ -84,6 +85,7 @@ func (scl *SCL) GetDataSet(ref string) (*DataSetDetail, error) {
 					for _, dSet := range lDevice.LN0.DataSets {
 						if fmt.Sprintf("%s.%s", lDevice.LN0.LnClass, dSet.Name) == args[1] {
 							return &DataSetDetail{
+								IEDName:           ied.Name,
 								DataSet:           dSet,
 								DataTypeTemplates: scl.DataTypeTemplates,
 							}, nil
