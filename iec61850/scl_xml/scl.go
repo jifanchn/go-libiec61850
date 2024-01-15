@@ -42,7 +42,7 @@ func (ds *DataSetDetail) GetDOType(prefix, lnClass, name string) DOType {
 	}
 
 	for _, lNodeType := range ds.DataTypeTemplates.LNodeType {
-		if lNodeType.ID == fmt.Sprintf("%s%s", prefix, lnClass) {
+		if lNodeType.ID == fmt.Sprintf("%s%s", prefix, lnClass) || lNodeType.LNClass == lnClass {
 			for _, do := range lNodeType.DO {
 				if do.Name == name {
 					doTypeId = do.Type

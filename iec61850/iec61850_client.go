@@ -253,6 +253,24 @@ func (client *IedClient) ReadDataSetValues(dataSetReference string, identifier s
 	return goValues, nil
 }
 
+func findDAName(das []scl_xml.DA, index int) string {
+	realIndex := 0
+	for _, da := range das {
+		if da.FC != "MX" && da.FC != "ST" {
+			continue
+		}
+
+		if realIndex == index {
+			return da.Name
+		}
+
+		realIndex++
+	}
+
+	fmt.Printf("[Wraning] findDAName failed, das: %+v, index: %d\n", das, index)
+	return ""
+}
+
 func (client *IedClient) ExplainDataSetValues(values []GoMmsValue, dSetScl *scl_xml.DataSetDetail) (map[string]interface{}, error) {
 	if len(dSetScl.FCDA) != len(values) {
 		return nil, errors.New("error dataset scl")
@@ -271,9 +289,19 @@ func (client *IedClient) ExplainDataSetValues(values []GoMmsValue, dSetScl *scl_
 				for i, v := range valueList {
 					var refNew string
 					if len(doTyp.DA) > i+1 {
-						refNew = fmt.Sprintf("%s.%s", ref, doTyp.DA[i].Name)
+						refNew = fmt.Sprintf("%s.%s", ref, findDAName(doTyp.DA, i))
 					} else {
 						refNew = fmt.Sprintf("%s.%d", ref, i)
+					}
+
+					switch rv := v.Value.(type) {
+					case []GoMmsValue:
+						if len(rv) != 1 {
+							fmt.Printf("[Wraning] ExplainDataSetValues has error length, ref: %s, value: %+v\n", refNew, v)
+							continue
+						}
+						ret[refNew] = rv[0].Value
+						continue
 					}
 					ret[refNew] = v.Value
 				}
