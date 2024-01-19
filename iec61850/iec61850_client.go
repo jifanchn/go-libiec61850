@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jifanchn/go-libiec61850/iec61850/scl_xml"
+	"strconv"
+	"strings"
 	"time"
 	"unsafe"
 )
@@ -27,6 +29,8 @@ type GoMmsValue struct {
 type Option func(client *IedClient)
 
 type IedClient struct {
+	withoutTimestamps bool
+
 	connection C.IedConnection
 }
 
@@ -56,6 +60,12 @@ func RequestTimeout(timeout time.Duration) func(*IedClient) {
 	// #define CONFIG_MMS_CONNECTION_DEFAULT_TIMEOUT 5000
 	return func(c *IedClient) {
 		C.IedConnection_setRequestTimeout(c.connection, C.uint(timeout/1e6))
+	}
+}
+
+func WithoutTimestamps(flag bool) func(*IedClient) {
+	return func(c *IedClient) {
+		c.withoutTimestamps = flag
 	}
 }
 
@@ -169,39 +179,38 @@ func (client *IedClient) resolveValue(value *C.MmsValue, valueType MMSType) inte
 
 	switch valueType {
 	case MMS_BOOLEAN:
-		realValue := bool(C.MmsValue_getBoolean(value))
-		goValue = realValue
+		goValue = bool(C.MmsValue_getBoolean(value))
 	case MMS_FLOAT:
-		realValue := float64(C.MmsValue_toDouble(value))
-		goValue = realValue
+		goValue = float64(C.MmsValue_toDouble(value))
 	case MMS_INTEGER:
-		realValue := int64(C.MmsValue_toInt64(value))
-		goValue = realValue
+		goValue = int64(C.MmsValue_toInt64(value))
 	case MMS_UNSIGNED:
-		realValue := int64(C.MmsValue_toInt64(value))
-		goValue = realValue
+		goValue = int64(C.MmsValue_toInt64(value))
 	case MMS_STRING:
-		realValue := C.GoString(C.MmsValue_toString(value))
-		goValue = realValue
+		goValue = C.GoString(C.MmsValue_toString(value))
 	case MMS_VISIBLE_STRING:
-		realValue := C.GoString(C.MmsValue_toString(value))
-		goValue = realValue
+		goValue = C.GoString(C.MmsValue_toString(value))
 	case MMS_STRUCTURE:
-		goValue = client.digIntoStructure(value)
+		goValue = client.digIntoStructure(value, valueType)
 	case MMS_ARRAY:
-		goValue = client.digIntoStructure(value)
+		goValue = client.digIntoStructure(value, valueType)
 	case MMS_BIT_STRING:
+		if client.withoutTimestamps {
+			return 0
+		}
 		goValue = uint32(C.MmsValue_getBitStringAsInteger(value))
 	case MMS_UTC_TIME:
+		if client.withoutTimestamps {
+			return 0
+		}
 		goValue = uint32(C.MmsValue_toUnixTimestamp(value))
 	}
 
 	return goValue
 }
 
-func (client *IedClient) digIntoStructure(mms *C.MmsValue) []GoMmsValue {
-	mmsType := C.MmsValue_getType(mms)
-	if MMSType(mmsType) != MMS_STRUCTURE {
+func (client *IedClient) digIntoStructure(mms *C.MmsValue, vType MMSType) []GoMmsValue {
+	if vType != MMS_STRUCTURE {
 		return nil
 	}
 	goValues := make([]GoMmsValue, 0)
@@ -278,35 +287,49 @@ func (client *IedClient) ExplainDataSetValues(values []GoMmsValue, dSetScl *scl_
 
 	ret := make(map[string]interface{})
 	for idx, entity := range dSetScl.FCDA {
-		ref := fmt.Sprintf("%s%s/%s%s%s.%s", dSetScl.IEDName, entity.LDInst, entity.Prefix, entity.LNClass, entity.LNInst, entity.DOName)
+		var builder strings.Builder
+
+		builder.WriteString(dSetScl.IEDName)
+		builder.WriteString(entity.LDInst)
+		builder.WriteString("/")
+		builder.WriteString(entity.Prefix)
+		builder.WriteString(entity.LNClass)
+		builder.WriteString(entity.LNInst)
+		builder.WriteString(".")
+		builder.WriteString(entity.DOName)
+
 		val := values[idx]
 		if entity.DAName != "" {
-			ref += fmt.Sprintf(".%s", entity.DAName)
-			ret[ref] = val.Value
+			builder.WriteString(".")
+			builder.WriteString(entity.DAName)
+			ret[builder.String()] = val.Value
 		} else {
 			if valueList, ok := val.Value.([]GoMmsValue); ok {
 				doTyp := dSetScl.GetDOType(entity.Prefix, entity.LNClass, entity.DOName)
 				for i, v := range valueList {
-					var refNew string
 					if len(doTyp.DA) > i+1 {
-						refNew = fmt.Sprintf("%s.%s", ref, findDAName(doTyp.DA, i))
+						builder.WriteString(".")
+						builder.WriteString(findDAName(doTyp.DA, i))
 					} else {
-						refNew = fmt.Sprintf("%s.%d", ref, i)
+						builder.WriteString(".")
+						builder.WriteString(strconv.Itoa(i))
 					}
 
 					switch rv := v.Value.(type) {
 					case []GoMmsValue:
 						if len(rv) != 1 {
-							fmt.Printf("[Wraning] ExplainDataSetValues has error length, ref: %s, value: %+v\n", refNew, v)
+							fmt.Printf("[Wraning] ExplainDataSetValues has error length, ref: %s, value: %+v\n", builder.String(), v)
 							continue
 						}
-						ret[refNew] = rv[0].Value
+						ret[builder.String()] = rv[0].Value
 						continue
 					}
-					ret[refNew] = v.Value
+					ret[builder.String()] = v.Value
 				}
 			}
 		}
+
+		builder.Reset()
 	}
 
 	return ret, nil
