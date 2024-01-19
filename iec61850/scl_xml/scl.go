@@ -33,10 +33,16 @@ type DataSetDetail struct {
 func (ds *DataSetDetail) GetDOType(prefix, lnClass, name string) DOType {
 	var doTypeId string
 
-	key := fmt.Sprintf("%s%s/%s", prefix, lnClass, name)
+	var builder strings.Builder
+	builder.WriteString(prefix)
+	builder.WriteString(lnClass)
+	builder.WriteString("/")
+	builder.WriteString(name)
+
+	defer builder.Reset()
 
 	if ds.DOTypes != nil {
-		if typ, ok := ds.DOTypes[key]; ok {
+		if typ, ok := ds.DOTypes[builder.String()]; ok {
 			return typ
 		}
 	}
@@ -59,7 +65,7 @@ func (ds *DataSetDetail) GetDOType(prefix, lnClass, name string) DOType {
 				ds.DOTypes = make(map[string]DOType)
 			}
 
-			ds.DOTypes[key] = doType
+			ds.DOTypes[builder.String()] = doType
 			return doType
 		}
 	}
