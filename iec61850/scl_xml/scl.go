@@ -381,9 +381,9 @@ func GetSCL(path string) (SCL, error) {
 	return scl, nil
 }
 
-func GetSCLFromFd(file os.File) (SCL, error) {
+func GetSCLFromFd(reader io.Reader) (SCL, error) {
 	var scl SCL
-	byteValue, err := io.ReadAll(&file)
+	byteValue, err := io.ReadAll(reader)
 	if err != nil {
 		return scl, err
 	}
