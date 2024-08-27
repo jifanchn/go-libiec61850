@@ -3,7 +3,7 @@ package scl_xml
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 )
@@ -368,7 +368,22 @@ func GetSCL(path string) (SCL, error) {
 	}
 	defer xmlFile.Close()
 
-	byteValue, err := ioutil.ReadAll(xmlFile)
+	byteValue, err := io.ReadAll(xmlFile)
+	if err != nil {
+		return scl, err
+	}
+
+	err = xml.Unmarshal(byteValue, &scl)
+	if err != nil {
+		return scl, fmt.Errorf("unmarshall failed: %v", err)
+	}
+
+	return scl, nil
+}
+
+func GetSCLFromFd(file os.File) (SCL, error) {
+	var scl SCL
+	byteValue, err := io.ReadAll(&file)
 	if err != nil {
 		return scl, err
 	}
